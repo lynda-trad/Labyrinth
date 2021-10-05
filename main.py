@@ -6,7 +6,11 @@ def init_labyrinth():
     num = int(input("Entrez la taille du labyrinthe\n"))
     size = num * 2 + 1
     labyrinth = np.tile('#', (size, size))
-    # labyrinth[i][j] = ' '
+
+    #Beginning and end
+    labyrinth[0][0] = ' '
+    labyrinth[size - 1][size - 1] = ' '
+
     # on creuse le passage petit a petit
     print(labyrinth, "\n")
     return labyrinth
