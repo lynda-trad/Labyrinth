@@ -7,7 +7,7 @@ def init_labyrinth():
     size = num * 2 + 1
     labyrinth = np.tile('#', (size, size))
 
-    #Beginning and end
+    # Beginning and end
     labyrinth[0][0] = ' '
     labyrinth[size - 1][size - 1] = ' '
 
@@ -53,8 +53,24 @@ def rightCell(cells, i, j):
             return False
 
 
-# List of visited tiles: exemple for tests
-cells = {(0, 0), (1, 0)}
+def findUnvisitedCell(cells, i, j):
+    if upCell(cells, i, j):
+        return (i - 1, j)
+    elif downCell(cells, i, j):
+        return (i + 1, j)
+    elif leftCell(cells, i, j):
+        return (i, j - 1)
+    elif rightCell(cells, i, j):
+        return (i, j + 1)
+
+
+# List of visited tiles: start and finish
+cells = {(0, 0), (1, 0), (len(labyrinth) - 1, len(labyrinth) - 1)}
+
+# Test findUnvisitedCell with cell 0 0 and cell 1 0
+newCell = findUnvisitedCell(cells, 0, 0)
+# newCell = findUnvisitedCell(cells, cells[0][0], cells[0][1])
+print("Random unvisited adjacent cell is : ", newCell)
 
 filename = input("Entrez un nom de fichier\n")
 if not exists(filename):
