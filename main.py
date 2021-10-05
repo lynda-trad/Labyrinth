@@ -17,40 +17,40 @@ labyrinth = init_labyrinth()
 
 # Return True if tile was visited and False if not
 
-def upTile(tiles, i, j):
+def upCell(cells, i, j):
     if i != 0:
-        if (i - 1, j) in tiles:
+        if (i - 1, j) in cells:
             return True
     else:
         return False
 
 
-def downTile(tiles, i, j):
+def downCell(cells, i, j):
     if i != len(labyrinth):
-        if (i + 1, j) in tiles:
+        if (i + 1, j) in cells:
             return True
         else:
             return False
 
 
-def leftTile(tiles, i, j):
+def leftCell(cells, i, j):
     if j != 0:
-        if (i, j - 1) in tiles:
+        if (i, j - 1) in cells:
             return True
         else:
             return False
 
 
-def rightTile(tiles, i, j):
+def rightCell(cells, i, j):
     if j != len(labyrinth):
-        if (i, j + 1) in tiles:
+        if (i, j + 1) in cells:
             return True
         else:
             return False
 
 
 # List of visited tiles: exemple for tests
-tiles = {(0, 0), (1, 0)}
+cells = {(0, 0), (1, 0)}
 
 filename = input("Entrez un nom de fichier\n")
 if not exists(filename):
