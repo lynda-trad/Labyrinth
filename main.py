@@ -1,3 +1,4 @@
+import random
 from os.path import exists
 import numpy as np
 
@@ -58,14 +59,28 @@ def rightCell(cells, i, j):
 
 
 def findUnvisitedCell(cells, i, j):
-    if upCell(cells, i, j):
-        return (i - 1, j)
-    elif downCell(cells, i, j):
-        return (i + 1, j)
-    elif leftCell(cells, i, j):
-        return (i, j - 1)
-    elif rightCell(cells, i, j):
-        return (i, j + 1)
+    # picks a random direction
+    direction = random.randrange(0, 4)
+    if direction == 0:
+        if upCell(cells, i, j):
+            return (i - 1, j)
+        else:
+            findUnvisitedCell(cells, i, j)
+    elif direction == 1:
+        if downCell(cells, i, j):
+            return (i + 1, j)
+        else:
+            findUnvisitedCell(cells, i, j)
+    elif direction == 2:
+        if leftCell(cells, i, j):
+            return (i, j - 1)
+        else:
+            findUnvisitedCell(cells, i, j)
+    elif direction == 3:
+        if rightCell(cells, i, j):
+            return (i, j + 1)
+        else:
+            findUnvisitedCell(cells, i, j)
 
 
 # List of visited tiles: start and finish
