@@ -18,7 +18,8 @@ def init_labyrinth():
     print(labyrinth, "\n")
     return labyrinth
 
-def initCells():
+
+def initVisitedCells():
     # Add walls to visited cells list
     cells = {
             (1, 1),
@@ -45,15 +46,8 @@ def initCells():
         if (i, mazeSize - 1) not in cells:
             cells.add((i, mazeSize - 1))
 
-    print(cells)
+    print(cells, "\n")
     return cells
-
-# List of visited tiles: start and finish
-
-
-labyrinth = init_labyrinth()
-mazeSize = len(labyrinth)
-cells = initCells()
 
 
 # Return True if tile was visited and False if not
@@ -146,15 +140,11 @@ def writeMazeToFile():
     file.close()
 
 
+labyrinth = init_labyrinth()
+mazeSize = len(labyrinth)
+cells = initVisitedCells()
+
 # Test findUnvisitedCell with cell 0 0 and cell 1 0
 newCell = findUnvisitedCell(cells, 2, 0)
 print("Random unvisited adjacent cell of (2,0) is : ", newCell)
 
-newCell = findUnvisitedCell(cells, 2, 0)
-print("Random unvisited adjacent cell of (2,0) is : ", newCell)
-
-newCell = findUnvisitedCell(cells, 2, 0)
-print("Random unvisited adjacent cell of (2,0) is : ", newCell)
-
-newCell = findUnvisitedCell(cells, mazeSize - 1, 0)
-print("Random unvisited adjacent cell of (", mazeSize - 1, ",0) is : ", newCell)
