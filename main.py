@@ -60,42 +60,58 @@ def rightCell(cells, i, j):
 
 def findUnvisitedCell(cells, i, j):
     # picks a random direction
-    direction = random.randrange(0, 4)
+    direction = random.randint(0, 3)
+    print("Direction: ", direction)
     if direction == 0:
+        print("Direction Up ")
         if upCell(cells, i, j):
+            print("Appel a upCell")
             return (i - 1, j)
         else:
             findUnvisitedCell(cells, i, j)
     elif direction == 1:
+        print("Direction Down ")
         if downCell(cells, i, j):
+            print("Appel a downCell")
             return (i + 1, j)
         else:
             findUnvisitedCell(cells, i, j)
     elif direction == 2:
+        print("Direction Left ")
         if leftCell(cells, i, j):
+            print("Appel a leftCell")
             return (i, j - 1)
         else:
             findUnvisitedCell(cells, i, j)
     elif direction == 3:
+        print("Direction Right ")
         if rightCell(cells, i, j):
+            print("Appel a rightCell")
             return (i, j + 1)
         else:
             findUnvisitedCell(cells, i, j)
+
+
+def writeMazeToFile():
+    filename = input("Entrez un nom de fichier\n")
+    if not exists(filename):
+        file = open(filename, "a+")
+    else:
+        file = open(filename, "w")
+    labyrinth.tofile(file, '', '%s')
+    file.close()
 
 
 # List of visited tiles: start and finish
 cells = {(0, 0), (1, 1), (len(labyrinth) - 2, len(labyrinth) - 1), (len(labyrinth) - 1, len(labyrinth) - 1)}
 
 # Test findUnvisitedCell with cell 0 0 and cell 1 0
-newCell = findUnvisitedCell(cells, 0, 0)
-# newCell = findUnvisitedCell(cells, cells[0][0], cells[0][1])
+newCell = findUnvisitedCell(cells, 1, 0)
 print("Random unvisited adjacent cell is : ", newCell)
 
-filename = input("Entrez un nom de fichier\n")
-if not exists(filename):
-    file = open(filename, "a+")
-else:
-    file = open(filename, "w")
-
-labyrinth.tofile(file, '', '%s')
-file.close()
+# L'algorithme du parcours en profondeur (ou "recursive backtracker" en anglais) commence sur
+# une cellule aléatoire dans le labyrinthe.
+# Il suffit ensuite de se diriger dans une direction aléatoire et de casse le mur face
+# à soi, tout en marquant la cellule précédente comme visitée.
+# Lorsque plus aucune direction n'est disponible, l'algorithme "remonte" à la position
+# précédente : c'est le backtracking.
