@@ -9,7 +9,11 @@ def init_labyrinth():
 
     # Beginning and end
     labyrinth[0][0] = ' '
+    labyrinth[1][0] = ' '
+    labyrinth[1][1] = ' '
     labyrinth[size - 1][size - 1] = ' '
+    labyrinth[size - 2][size - 1] = ' '
+    labyrinth[size - 2][size - 2] = ' '
 
     # on creuse le passage petit a petit
     print(labyrinth, "\n")
@@ -65,7 +69,7 @@ def findUnvisitedCell(cells, i, j):
 
 
 # List of visited tiles: start and finish
-cells = {(0, 0), (1, 0), (len(labyrinth) - 1, len(labyrinth) - 1)}
+cells = {(0, 0), (1, 1), (len(labyrinth) - 2, len(labyrinth) - 1), (len(labyrinth) - 1, len(labyrinth) - 1)}
 
 # Test findUnvisitedCell with cell 0 0 and cell 1 0
 newCell = findUnvisitedCell(cells, 0, 0)
