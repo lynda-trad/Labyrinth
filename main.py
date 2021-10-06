@@ -22,6 +22,7 @@ def init_labyrinth():
 
 
 labyrinth = init_labyrinth()
+mazeSize = len(labyrinth)
 
 
 # Return True if tile was visited and False if not
@@ -30,64 +31,71 @@ def upCell(cells, i, j):
     if i != 0:
         if (i - 1, j) in cells:
             return True
-    else:
-        return False
+    return False
 
 
 def downCell(cells, i, j):
-    if i != len(labyrinth):
+    if i != mazeSize - 1:
         if (i + 1, j) in cells:
             return True
-        else:
-            return False
+    return False
 
 
 def leftCell(cells, i, j):
     if j != 0:
         if (i, j - 1) in cells:
             return True
-        else:
-            return False
+    return False
 
 
 def rightCell(cells, i, j):
-    if j != len(labyrinth):
+    if j != mazeSize - 1:
         if (i, j + 1) in cells:
             return True
-        else:
-            return False
+    return False
 
 
 def findUnvisitedCell(cells, i, j):
     # picks a random direction
     direction = random.randint(0, 3)
-    print("Direction: ", direction)
+    print(direction)
     if direction == 0:
-        print("Direction Up ")
-        if upCell(cells, i, j):
-            print("Appel a upCell")
-            return (i - 1, j)
+        if not upCell(cells, i, j):
+            print("up")
+            if i != 0:
+                return (i - 1, j)
+            else:
+                findUnvisitedCell(cells, i, j)
         else:
             findUnvisitedCell(cells, i, j)
+
     elif direction == 1:
-        print("Direction Down ")
-        if downCell(cells, i, j):
-            print("Appel a downCell")
-            return (i + 1, j)
+        if not downCell(cells, i, j):
+            print("down")
+            if i != mazeSize - 1:
+                return (i + 1, j)
+            else:
+                findUnvisitedCell(cells, i, j)
         else:
             findUnvisitedCell(cells, i, j)
+
     elif direction == 2:
-        print("Direction Left ")
-        if leftCell(cells, i, j):
-            print("Appel a leftCell")
-            return (i, j - 1)
+        if not leftCell(cells, i, j):
+            print("left")
+            if j != 0:
+                return (i, j - 1)
+            else:
+                findUnvisitedCell(cells, i, j)
         else:
             findUnvisitedCell(cells, i, j)
+
     elif direction == 3:
-        print("Direction Right ")
-        if rightCell(cells, i, j):
-            print("Appel a rightCell")
-            return (i, j + 1)
+        if not rightCell(cells, i, j):
+            print("right")
+            if j != mazeSize - 1:
+                return (i, j + 1)
+            else:
+                findUnvisitedCell(cells, i, j)
         else:
             findUnvisitedCell(cells, i, j)
 
@@ -103,15 +111,22 @@ def writeMazeToFile():
 
 
 # List of visited tiles: start and finish
-cells = {(0, 0), (1, 1), (len(labyrinth) - 2, len(labyrinth) - 1), (len(labyrinth) - 1, len(labyrinth) - 1)}
+cells = {
+        (0, 0), (1, 0), (1, 1),
+        (mazeSize - 1, mazeSize - 1),
+        (mazeSize - 2, mazeSize - 2),
+        (mazeSize - 2, mazeSize - 1)
+        }
 
 # Test findUnvisitedCell with cell 0 0 and cell 1 0
-newCell = findUnvisitedCell(cells, 1, 0)
-print("Random unvisited adjacent cell is : ", newCell)
+newCell = findUnvisitedCell(cells, 2, 0)
+print("Random unvisited adjacent cell of (2,0) is : ", newCell)
 
-# L'algorithme du parcours en profondeur (ou "recursive backtracker" en anglais) commence sur
-# une cellule aléatoire dans le labyrinthe.
-# Il suffit ensuite de se diriger dans une direction aléatoire et de casse le mur face
-# à soi, tout en marquant la cellule précédente comme visitée.
-# Lorsque plus aucune direction n'est disponible, l'algorithme "remonte" à la position
-# précédente : c'est le backtracking.
+newCell = findUnvisitedCell(cells, 2, 0)
+print("Random unvisited adjacent cell of (2,0) is : ", newCell)
+
+newCell = findUnvisitedCell(cells, 2, 0)
+print("Random unvisited adjacent cell of (2,0) is : ", newCell)
+
+newCell = findUnvisitedCell(cells, mazeSize - 1, 0)
+print("Random unvisited adjacent cell of (", mazeSize - 1, ",0) is : ", newCell)
