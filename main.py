@@ -3,6 +3,7 @@ from os.path import exists
 import numpy as np
 
 
+# Initializes labyrinth for printing
 def init_labyrinth():
     num = int(input("Entrez la taille du labyrinthe\n"))
     size = num * 2 + 1
@@ -19,6 +20,7 @@ def init_labyrinth():
     return labyrinth
 
 
+# Initializes visited cell list
 def initVisitedCells():
     # Add walls to visited cells list
     cells = [
@@ -50,7 +52,7 @@ def initVisitedCells():
     return cells
 
 
-# Return True if tile was visited and False if not
+# Returns True if tile was visited and False if not
 def upCell(cells, i, j):
     if i != 0:
         if (i - 1, j) in cells:
@@ -79,6 +81,7 @@ def rightCell(cells, i, j):
     return False
 
 
+# Calls Cell function to check each direction
 def upDirection(cells, i, j, directions, randomDir):
     if not upCell(cells, i, j):
         print("up")
@@ -137,6 +140,7 @@ def rightDirection(cells, i, j, directions, randomDir):
         findUnvisitedCell(cells, i, j, directions)
 
 
+# Finds first unvisited cell around og cell
 def findUnvisitedCell(cells, i, j, directions):
     # picks a random direction
     randomDir = random.choice(directions)
@@ -170,34 +174,38 @@ def writeMazeToFile():
     file.close()
 
 
-# Parcours en profondeur
-def depthPath(cells, path, i, j, directions):
-    cellsNumber = mazeSize ^ 2 - (mazeSize * 4 + 2)
-
+# Depth First Search
+def depthPath(cells, path, i, j, directions, cellsNumber):
     print(path)
     newCell = findUnvisitedCell(cells, i, j, directions)
     # tant quil reste des cases non visitées on continue le parcours en profondeur
     while cellsNumber != 0:
-        if newCell == (1, 1):
+        if newCell == (i, j):
             newCell = path.pop()
-            depthPath(cells, path, newCell[0], newCell[i], directions)
+            depthPath(cells, path, newCell[0], newCell[1], directions)
         path.append(newCell)
         cells.append(newCell)
         cellsNumber -= 1
+        depthPath(cells, path, newCell[0], newCell[1], directions)
     return path
 
 
-#######################################
+########################################################
 labyrinth = init_labyrinth()
 mazeSize = len(labyrinth)
 cells = initVisitedCells()
 
 # Test findUnvisitedCell with cell 0 0 and cell 1 0
+# ERROR : returns None sometimes
+print("\nTest of findUnvisitedCell")
 directions = [0, 1, 2, 3]
 newCell = findUnvisitedCell(cells, 2, 0, directions)
 print("Random unvisited adjacent cell of (2,0) is : ", newCell)
 
-# Depth Path
+# Depth First Search
+print("\nTest of Depth First Search")
+cellsNumber = mazeSize ^ 2 - (mazeSize * 4 + 2)
 path = [(1, 1)]
-# Start in cell (1,1)
-newCell = depthPath(cells, path, 1, 1, directions)
+# Starts at cell (1,1)
+path = depthPath(cells, path, 1, 1, directions, cellsNumber)
+print(path)
