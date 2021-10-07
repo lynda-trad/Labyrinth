@@ -174,15 +174,17 @@ def writeMazeToFile():
 def depthPath(cells, path, i, j, directions):
     cellsNumber = mazeSize ^ 2 - (mazeSize * 4 + 2)
 
-    # Start in cell (1,1)
-    newCell = findUnvisitedCell(cells, 1, 1, directions)
-
+    print(path)
+    newCell = findUnvisitedCell(cells, i, j, directions)
     # tant quil reste des cases non visitées on continue le parcours en profondeur
     while cellsNumber != 0:
-        newCell = findUnvisitedCell(cells, i, j, directions)
         if newCell == (1, 1):
-            depthPath(cells, path, directions)
-    return
+            newCell = path.pop()
+            depthPath(cells, path, newCell[0], newCell[i], directions)
+        path.append(newCell)
+        cells.append(newCell)
+        cellsNumber -= 1
+    return path
 
 
 #######################################
@@ -197,4 +199,5 @@ print("Random unvisited adjacent cell of (2,0) is : ", newCell)
 
 # Depth Path
 path = [(1, 1)]
-#depthPath(cells, path, 1, 1, directions)
+# Start in cell (1,1)
+newCell = depthPath(cells, path, 1, 1, directions)
