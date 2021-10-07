@@ -48,7 +48,7 @@ def initVisitedCells():
         if (i, mazeSize - 1) not in cells:
             cells.append((i, mazeSize - 1))
 
-    print(cells, "\n")
+    print("Visited cells initialisation:", cells, "\n")
     return cells
 
 
@@ -141,12 +141,12 @@ def rightDirection(cells, i, j, directions, randomDir):
 # Finds first unvisited cell around og cell
 def findUnvisitedCell(cells, i, j, directions):
     # picks a random direction
-    randomDir = random.choice(directions)
+    if len(directions) != 0:
+        randomDir = random.choice(directions)
+    else:  # if cell is surrounded with visited cells, returns itself
+        return (i, j)
     print("Random direction: ", randomDir)
     print("Possible directions : ", directions)
-    # if cell is surrounded with visited cells, returns itself
-    if randomDir not in directions:
-        return (i, j)
 
     if randomDir == 0:
         return upDirection(cells, i, j, directions, randomDir)
@@ -179,12 +179,43 @@ def DFS(cells, path, i, j, directions, cellsNumber):
     # tant quil reste des cases non visitées on continue le parcours en profondeur
     while cellsNumber != 0:
         if newCell == (i, j):
-            newCell = path.pop()
-            DFS(cells, path, newCell[0], newCell[1], directions, cellsNumber)
+            if len(path) != 0:
+                newCell = path.pop()
+                DFS(cells, path, newCell[0], newCell[1], directions, cellsNumber)
+            else:
+                return path
         path.append(newCell)
         cells.append(newCell)
         cellsNumber -= 1
         DFS(cells, path, newCell[0], newCell[1], directions, cellsNumber)
+    return path
+
+
+# Other version of DFS
+def get_neighbours(i, j):
+    neighbours = []
+    if i != 1:
+        neighbours.append((i - 1, j))
+
+    if i != mazeSize - 2:
+        neighbours.append((i + 1, j))
+
+    if j != 1:
+        neighbours.append((i, j - 1))
+
+    if j != mazeSize - 2:
+        neighbours.append((i, j + 1))
+    return neighbours
+
+
+def DFS_bis(path, i, j):
+    path.append((i, j))
+    cells.append((i, j))
+    neighbours = get_neighbours(i, j)
+    random.shuffle(neighbours)
+    for (x, y) in neighbours:
+        if (x, y) not in path:
+            return DFS_bis(path, x, y)
     return path
 
 
@@ -200,10 +231,18 @@ directions = [0, 1, 2, 3]
 newCell = findUnvisitedCell(cells, 1, 1, directions)
 
 # Depth First Search
-print("\nTest of Depth First Search")
-cellsNumber = mazeSize ^ 2 - (mazeSize * 4 + 2)
-path = [(1, 1)]
-
 # Starts at cell (1,1)
-path = DFS(cells, path, 1, 1, directions, cellsNumber)
-print(path)
+print("\nTest of Depth First Search")
+
+# Second Version of DFS
+path = []
+path = DFS_bis(path, 1, 1)
+print("Second version of DFS:", path)
+print("Cells:", cells)
+
+# First Version of DFS
+#cellsNumber = mazeSize ^ 2 - (mazeSize * 4 + 2)
+#path = [(1, 1)]
+#path = DFS(cells, path, 1, 1, directions, cellsNumber)
+#print("First version of DFS:", path)
+#print(cells)
