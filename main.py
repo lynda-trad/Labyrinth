@@ -22,9 +22,9 @@ def init_labyrinth():
 def initVisitedCells():
     # Add walls to visited cells list
     cells = {
-            (1, 1),
-            (mazeSize - 2, mazeSize - 2)
-            }
+        (1, 1),
+        (mazeSize - 2, mazeSize - 2)
+    }
 
     # line 0
     for j in range(mazeSize):
@@ -79,55 +79,85 @@ def rightCell(cells, i, j):
     return False
 
 
-def findUnvisitedCell(cells, i, j):
+def upDirection(cells, i, j, directions, randomDir):
+    if not upCell(cells, i, j):
+        print("up")
+        if i != 0:
+            print("return up")
+            return (i - 1, j)
+        else:
+            directions.remove(randomDir)
+            findUnvisitedCell(cells, i, j, directions)
+    else:
+        directions.remove(randomDir)
+        findUnvisitedCell(cells, i, j, directions)
+
+
+def downDirection(cells, i, j, directions, randomDir):
+    if not downCell(cells, i, j):
+        print("down")
+        if i != mazeSize - 1:
+            print("return down")
+            i += 1
+            return (i, j)
+        else:
+            directions.remove(randomDir)
+            findUnvisitedCell(cells, i, j, directions)
+    else:
+        directions.remove(randomDir)
+        findUnvisitedCell(cells, i, j, directions)
+
+
+def leftDirection(cells, i, j, directions, randomDir):
+    if not leftCell(cells, i, j):
+        print("left")
+        if j != 0:
+            print("return left")
+            return (i, j - 1)
+        else:
+            directions.remove(randomDir)
+            findUnvisitedCell(cells, i, j, directions)
+    else:
+        directions.remove(randomDir)
+        findUnvisitedCell(cells, i, j, directions)
+
+
+def rightDirection(cells, i, j, directions, randomDir):
+    if not rightCell(cells, i, j):
+        print("right")
+        if j != mazeSize - 1:
+            print("return right")
+            j += 1
+            return (i, j)
+        else:
+            directions.remove(randomDir)
+            findUnvisitedCell(cells, i, j, directions)
+    else:
+        directions.remove(randomDir)
+        findUnvisitedCell(cells, i, j, directions)
+
+
+def findUnvisitedCell(cells, i, j, directions):
     # picks a random direction
-    direction = random.randint(0, 3)
-    print(direction)
-    if direction == 0:
-        if not upCell(cells, i, j):
-            print("up")
-            if i != 0:
-                print("return up")
-                return (i - 1, j)
-            else:
-                findUnvisitedCell(cells, i, j)
-        else:
-            findUnvisitedCell(cells, i, j)
+    randomDir = random.choice(directions)
+    print("Random direction: ", randomDir)
+    print("Possible directions : ", directions)
 
-    elif direction == 1:
-        if not downCell(cells, i, j):
-            print("down")
-            if i != mazeSize - 1:
-                print("return down")
-                i += 1
-                return (i, j)
-            else:
-                findUnvisitedCell(cells, i, j)
-        else:
-            findUnvisitedCell(cells, i, j)
+    # if cell is surrounded with visited cells, returns itself
+    if randomDir not in directions:
+        return (i, j)
 
-    elif direction == 2:
-        if not leftCell(cells, i, j):
-            print("left")
-            if j != 0:
-                print("return left")
-                return (i, j - 1)
-            else:
-                findUnvisitedCell(cells, i, j)
-        else:
-            findUnvisitedCell(cells, i, j)
+    if randomDir == 0:
+        upDirection(cells, i, j, directions, randomDir)
 
-    elif direction == 3:
-        if not rightCell(cells, i, j):
-            print("right")
-            if j != mazeSize - 1:
-                print("return right")
-                j += 1
-                return (i, j)
-            else:
-                findUnvisitedCell(cells, i, j)
-        else:
-            findUnvisitedCell(cells, i, j)
+    elif randomDir == 1:
+        downDirection(cells, i, j, directions, randomDir)
+
+    elif randomDir == 2:
+        leftDirection(cells, i, j, directions, randomDir)
+
+    elif randomDir == 3:
+        rightDirection(cells, i, j, directions, randomDir)
 
 
 def writeMazeToFile():
@@ -140,11 +170,22 @@ def writeMazeToFile():
     file.close()
 
 
+# Parcours en profondeur
+def depthPath(cells):
+    cellsNumber = mazeSize ^ 2 - (mazeSize * 4 + 2)
+    # Start in cell (1,1)
+    # tant quil reste des cases non visitées on continue le parcours en profondeur
+    while cellsNumber != 0:
+        findUnvisitedCell(cells, 1, 1)
+    return
+
+
+#######################################"
 labyrinth = init_labyrinth()
 mazeSize = len(labyrinth)
 cells = initVisitedCells()
 
 # Test findUnvisitedCell with cell 0 0 and cell 1 0
-newCell = findUnvisitedCell(cells, 2, 0)
+direction = [0, 1, 2, 3]
+newCell = findUnvisitedCell(cells, 2, 0, direction)
 print("Random unvisited adjacent cell of (2,0) is : ", newCell)
-
