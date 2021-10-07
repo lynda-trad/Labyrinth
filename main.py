@@ -248,7 +248,7 @@ print("\nTest of Depth First Search")
 #print(cells)
 
 # Second Version of DFS
-path = []
+path = [(1, 1)]
 DFS_bis(path, 1, 1)
 print("Second version of DFS:", path)
 print("len of path", len(path))
