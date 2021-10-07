@@ -49,6 +49,7 @@ def initVisitedCells():
             cells.append((i, mazeSize - 1))
 
     print("Visited cells initialisation:", cells, "\n")
+    cells.sort()
     return cells
 
 
@@ -194,16 +195,16 @@ def DFS(cells, path, i, j, directions, cellsNumber):
 # Other version of DFS
 def get_neighbours(i, j):
     neighbours = []
-    if i != 1:
+    if i != 0:
         neighbours.append((i - 1, j))
 
-    if i != mazeSize - 2:
+    if i != mazeSize - 1:
         neighbours.append((i + 1, j))
 
-    if j != 1:
+    if j != 0:
         neighbours.append((i, j - 1))
 
-    if j != mazeSize - 2:
+    if j != mazeSize - 1:
         neighbours.append((i, j + 1))
     return neighbours
 
@@ -213,9 +214,14 @@ def DFS_bis(path, i, j):
     print("currrent cell:", (i, j))
     neighbours = get_neighbours(i, j)
     random.shuffle(neighbours)
+
+    print("neighbours:", neighbours)
     for (x, y) in neighbours:
         if (x, y) not in cells:
+            print("adds", (x,y), "to path")
+            print("cells in DFS: BEFORE APPEND", cells)
             path.append((x, y))
+            print("cells in DFS: AFTER APPEND", cells)
             DFS_bis(path, x, y)
 
 
@@ -223,12 +229,12 @@ def DFS_bis(path, i, j):
 labyrinth = init_labyrinth()
 mazeSize = len(labyrinth)
 cells = initVisitedCells()
+print("init cells:", cells)
 
 # Test findUnvisitedCell with cell 0 0 and cell 1 0
-# ERROR : returns None sometimes
-print("\nTest of findUnvisitedCell")
-directions = [0, 1, 2, 3]
-newCell = findUnvisitedCell(cells, 1, 1, directions)
+#print("\nTest of findUnvisitedCell")
+#directions = [0, 1, 2, 3]
+#newCell = findUnvisitedCell(cells, 1, 1, directions)
 
 # Depth First Search
 # Starts at cell (1,1)
@@ -246,5 +252,7 @@ path = []
 DFS_bis(path, 1, 1)
 print("Second version of DFS:", path)
 print("len of path", len(path))
-print("Cells:", cells)
+
+cells.sort()
+print("FINAL Cells:", cells)
 print("len of cells", len(cells))
