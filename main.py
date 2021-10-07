@@ -173,7 +173,7 @@ def writeMazeToFile():
 
 # Depth First Search
 def DFS(cells, path, i, j, directions, cellsNumber):
-    print(path)
+    print("path in DFS:", path)
     newCell = findUnvisitedCell(cells, i, j, directions)
     directions = [0, 1, 2, 3]
     # tant quil reste des cases non visitées on continue le parcours en profondeur
@@ -209,14 +209,14 @@ def get_neighbours(i, j):
 
 
 def DFS_bis(path, i, j):
-    path.append((i, j))
     cells.append((i, j))
+    print("currrent cell:", (i, j))
     neighbours = get_neighbours(i, j)
     random.shuffle(neighbours)
     for (x, y) in neighbours:
-        if (x, y) not in path:
-            return DFS_bis(path, x, y)
-    return path
+        if (x, y) not in cells:
+            path.append((x, y))
+            DFS_bis(path, x, y)
 
 
 ########################################################
@@ -234,15 +234,17 @@ newCell = findUnvisitedCell(cells, 1, 1, directions)
 # Starts at cell (1,1)
 print("\nTest of Depth First Search")
 
-# Second Version of DFS
-path = []
-path = DFS_bis(path, 1, 1)
-print("Second version of DFS:", path)
-print("Cells:", cells)
-
 # First Version of DFS
 #cellsNumber = mazeSize ^ 2 - (mazeSize * 4 + 2)
 #path = [(1, 1)]
 #path = DFS(cells, path, 1, 1, directions, cellsNumber)
 #print("First version of DFS:", path)
 #print(cells)
+
+# Second Version of DFS
+path = []
+DFS_bis(path, 1, 1)
+print("Second version of DFS:", path)
+print("len of path", len(path))
+print("Cells:", cells)
+print("len of cells", len(cells))
