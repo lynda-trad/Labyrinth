@@ -102,7 +102,9 @@ def downDirection(cells, i, j, directions, randomDir):
         if i != mazeSize - 1:
             print("return down")
             i += 1
-            return (i, j)
+            new = (i, j)
+            print("down direction cell", new)
+            return new
         else:
             directions.remove(randomDir)
             findUnvisitedCell(cells, i, j, directions)
@@ -131,7 +133,9 @@ def rightDirection(cells, i, j, directions, randomDir):
         if j != mazeSize - 1:
             print("return right")
             j += 1
-            return (i, j)
+            new = (i, j)
+            print("in rightDirection new : ", new)
+            return new
         else:
             directions.remove(randomDir)
             findUnvisitedCell(cells, i, j, directions)
@@ -146,22 +150,22 @@ def findUnvisitedCell(cells, i, j, directions):
     randomDir = random.choice(directions)
     print("Random direction: ", randomDir)
     print("Possible directions : ", directions)
-
     # if cell is surrounded with visited cells, returns itself
     if randomDir not in directions:
         return (i, j)
 
     if randomDir == 0:
-        upDirection(cells, i, j, directions, randomDir)
+        return upDirection(cells, i, j, directions, randomDir)
 
     elif randomDir == 1:
-        downDirection(cells, i, j, directions, randomDir)
+        return downDirection(cells, i, j, directions, randomDir)
 
     elif randomDir == 2:
-        leftDirection(cells, i, j, directions, randomDir)
+        return leftDirection(cells, i, j, directions, randomDir)
 
     elif randomDir == 3:
-        rightDirection(cells, i, j, directions, randomDir)
+        return rightDirection(cells, i, j, directions, randomDir)
+    directions = [0, 1, 2, 3]
 
 
 def writeMazeToFile():
@@ -175,18 +179,18 @@ def writeMazeToFile():
 
 
 # Depth First Search
-def depthPath(cells, path, i, j, directions, cellsNumber):
+def DFS(cells, path, i, j, directions, cellsNumber):
     print(path)
     newCell = findUnvisitedCell(cells, i, j, directions)
     # tant quil reste des cases non visitées on continue le parcours en profondeur
     while cellsNumber != 0:
         if newCell == (i, j):
             newCell = path.pop()
-            depthPath(cells, path, newCell[0], newCell[1], directions)
+            DFS(cells, path, newCell[0], newCell[1], directions, cellsNumber)
         path.append(newCell)
         cells.append(newCell)
         cellsNumber -= 1
-        depthPath(cells, path, newCell[0], newCell[1], directions)
+        DFS(cells, path, newCell[0], newCell[1], directions, cellsNumber)
     return path
 
 
@@ -199,13 +203,17 @@ cells = initVisitedCells()
 # ERROR : returns None sometimes
 print("\nTest of findUnvisitedCell")
 directions = [0, 1, 2, 3]
-newCell = findUnvisitedCell(cells, 2, 0, directions)
-print("Random unvisited adjacent cell of (2,0) is : ", newCell)
+newCell = findUnvisitedCell(cells, 1, 1, directions)
+print("Random unvisited adjacent cell of (1,1) is : ", newCell)
+newCell = findUnvisitedCell(cells, 1, 1, directions)
+print("Random unvisited adjacent cell of (1,1) is : ", newCell)
+newCell = findUnvisitedCell(cells, 1, 1, directions)
+print("Random unvisited adjacent cell of (1,1) is : ", newCell)
 
 # Depth First Search
 print("\nTest of Depth First Search")
 cellsNumber = mazeSize ^ 2 - (mazeSize * 4 + 2)
 path = [(1, 1)]
 # Starts at cell (1,1)
-path = depthPath(cells, path, 1, 1, directions, cellsNumber)
+path = DFS(cells, path, 1, 1, directions, cellsNumber)
 print(path)
