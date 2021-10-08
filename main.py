@@ -211,22 +211,21 @@ def get_neighbours(i, j):
 
 def DFS_bis(path, i, j):
     cells.append((i, j))
-    print("currrent cell:", (i, j))
+    print("current cell:", (i, j))
     neighbours = get_neighbours(i, j)
     random.shuffle(neighbours)
 
     print("neighbours:", neighbours)
     for (x, y) in neighbours:
         if (x, y) not in cells:
-            print("adds", (x,y), "to path")
+            print("adds", (x, y), "to path")
             print("cells in DFS: BEFORE APPEND", cells)
-            path.append( ((x, y), 'path'))
+            path[(x, y)] = 'path'
             print("cells in DFS: AFTER APPEND", cells)
             DFS_bis(path, x, y)
         elif (x, y) == neighbours[len(neighbours) - 1]:
             # cul de sac
-            path.append(((x, y), 'stop'))
-
+            path[(x, y)] = 'stop'
 
 
 ########################################################
@@ -236,23 +235,25 @@ cells = initVisitedCells()
 print("init cells:", cells)
 
 # Test findUnvisitedCell with cell 0 0 and cell 1 0
-#print("\nTest of findUnvisitedCell")
-#directions = [0, 1, 2, 3]
-#newCell = findUnvisitedCell(cells, 1, 1, directions)
+# print("\nTest of findUnvisitedCell")
+# directions = [0, 1, 2, 3]
+# newCell = findUnvisitedCell(cells, 1, 1, directions)
 
 # Depth First Search
 # Starts at cell (1,1)
 print("\nTest of Depth First Search")
 
 # First Version of DFS
-#cellsNumber = mazeSize ^ 2 - (mazeSize * 4 + 2)
-#path = [(1, 1)]
-#path = DFS(cells, path, 1, 1, directions, cellsNumber)
-#print("First version of DFS:", path)
-#print(cells)
+# cellsNumber = mazeSize ^ 2 - (mazeSize * 4 + 2)
+# path = [(1, 1)]
+# path = DFS(cells, path, 1, 1, directions, cellsNumber)
+# print("First version of DFS:", path)
+# print(cells)
 
 # Second Version of DFS
-path = {((1, 1), 'path')}
+path = {
+    (1, 1): 'path'
+    }
 DFS_bis(path, 1, 1)
 print("Second version of DFS:", path)
 print("len of path", len(path))
