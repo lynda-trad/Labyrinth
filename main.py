@@ -220,9 +220,13 @@ def DFS_bis(path, i, j):
         if (x, y) not in cells:
             print("adds", (x,y), "to path")
             print("cells in DFS: BEFORE APPEND", cells)
-            path.append((x, y))
+            path.append( ((x, y), 'path'))
             print("cells in DFS: AFTER APPEND", cells)
             DFS_bis(path, x, y)
+        elif (x, y) == neighbours[len(neighbours) - 1]:
+            # cul de sac
+            path.append(((x, y), 'stop'))
+
 
 
 ########################################################
@@ -248,7 +252,7 @@ print("\nTest of Depth First Search")
 #print(cells)
 
 # Second Version of DFS
-path = [(1, 1)]
+path = {((1, 1), 'path')}
 DFS_bis(path, 1, 1)
 print("Second version of DFS:", path)
 print("len of path", len(path))
