@@ -53,115 +53,6 @@ def initVisitedCells():
     return cells
 
 
-# Returns True if tile was visited and False if not
-def upCell(cells, i, j):
-    if i != 0:
-        if (i - 1, j) in cells:
-            return True
-    return False
-
-
-def downCell(cells, i, j):
-    if i != mazeSize - 1:
-        if (i + 1, j) in cells:
-            return True
-    return False
-
-
-def leftCell(cells, i, j):
-    if j != 0:
-        if (i, j - 1) in cells:
-            return True
-    return False
-
-
-def rightCell(cells, i, j):
-    if j != mazeSize - 1:
-        if (i, j + 1) in cells:
-            return True
-    return False
-
-
-# Calls Cell function to check each direction
-def upDirection(cells, i, j, directions, randomDir):
-    if not upCell(cells, i, j):
-        print("up")
-        if i != 0:
-            print("return up")
-            return (i - 1, j)
-        else:
-            directions.remove(randomDir)
-            return findUnvisitedCell(cells, i, j, directions)
-    else:
-        directions.remove(randomDir)
-        return findUnvisitedCell(cells, i, j, directions)
-
-
-def downDirection(cells, i, j, directions, randomDir):
-    if not downCell(cells, i, j):
-        print("down")
-        if i != mazeSize - 1:
-            print("return down")
-            return (i + 1, j)
-        else:
-            directions.remove(randomDir)
-            return findUnvisitedCell(cells, i, j, directions)
-    else:
-        directions.remove(randomDir)
-        return findUnvisitedCell(cells, i, j, directions)
-
-
-def leftDirection(cells, i, j, directions, randomDir):
-    if not leftCell(cells, i, j):
-        print("left")
-        if j != 0:
-            print("return left")
-            return (i, j - 1)
-        else:
-            directions.remove(randomDir)
-            return findUnvisitedCell(cells, i, j, directions)
-    else:
-        directions.remove(randomDir)
-        return findUnvisitedCell(cells, i, j, directions)
-
-
-def rightDirection(cells, i, j, directions, randomDir):
-    if not rightCell(cells, i, j):
-        print("right")
-        if j != mazeSize - 1:
-            print("return right")
-            return (i, j + 1)
-        else:
-            directions.remove(randomDir)
-            return findUnvisitedCell(cells, i, j, directions)
-    else:
-        directions.remove(randomDir)
-        return findUnvisitedCell(cells, i, j, directions)
-
-
-# Finds first unvisited cell around og cell
-def findUnvisitedCell(cells, i, j, directions):
-    # picks a random direction
-    if len(directions) != 0:
-        randomDir = random.choice(directions)
-    else:  # if cell is surrounded with visited cells, returns itself
-        return (i, j)
-    print("Random direction: ", randomDir)
-    print("Possible directions : ", directions)
-
-    if randomDir == 0:
-        return upDirection(cells, i, j, directions, randomDir)
-
-    elif randomDir == 1:
-        return downDirection(cells, i, j, directions, randomDir)
-
-    elif randomDir == 2:
-        return leftDirection(cells, i, j, directions, randomDir)
-
-    elif randomDir == 3:
-        return rightDirection(cells, i, j, directions, randomDir)
-
-
 def writeMazeToFile():
     filename = input("Entrez un nom de fichier\n")
     if not exists(filename):
@@ -172,44 +63,24 @@ def writeMazeToFile():
     file.close()
 
 
-# Depth First Search
-def DFS(cells, path, i, j, directions, cellsNumber):
-    print("path in DFS:", path)
-    newCell = findUnvisitedCell(cells, i, j, directions)
-    directions = [0, 1, 2, 3]
-    # tant quil reste des cases non visitées on continue le parcours en profondeur
-    while cellsNumber != 0:
-        if newCell == (i, j):
-            if len(path) != 0:
-                newCell = path.pop()
-                DFS(cells, path, newCell[0], newCell[1], directions, cellsNumber)
-            else:
-                return path
-        path.append(newCell)
-        cells.append(newCell)
-        cellsNumber -= 1
-        DFS(cells, path, newCell[0], newCell[1], directions, cellsNumber)
-    return path
-
-
 # Other version of DFS
 def get_neighbours(i, j):
     neighbours = []
     if i != 0:
         neighbours.append((i - 1, j))
 
-    if i != mazeSize - 1:
+    if i != mazeSize - 2:
         neighbours.append((i + 1, j))
 
     if j != 0:
         neighbours.append((i, j - 1))
 
-    if j != mazeSize - 1:
+    if j != mazeSize - 2:
         neighbours.append((i, j + 1))
     return neighbours
 
 
-def DFS_bis(path, i, j):
+def DFS_bis(path, arretes, i, j):
     cells.append((i, j))
     print("current cell:", (i, j))
     neighbours = get_neighbours(i, j)
@@ -222,10 +93,11 @@ def DFS_bis(path, i, j):
             print("cells in DFS: BEFORE APPEND", cells)
             path[(x, y)] = 'path'
             print("cells in DFS: AFTER APPEND", cells)
-            DFS_bis(path, x, y)
-        elif (x, y) == neighbours[len(neighbours) - 1]:
-            # cul de sac
-            path[(x, y)] = 'stop'
+            arretes.append(((i, j), (x, y)))
+            DFS_bis(path, arretes, x, y)
+        # elif (x, y) == neighbours[len(neighbours) - 1]:
+        # cul de sac
+        # path[(i, j)] = 'stop'
 
 
 ########################################################
@@ -234,30 +106,19 @@ mazeSize = len(labyrinth)
 cells = initVisitedCells()
 print("init cells:", cells)
 
-# Test findUnvisitedCell with cell 0 0 and cell 1 0
-# print("\nTest of findUnvisitedCell")
-# directions = [0, 1, 2, 3]
-# newCell = findUnvisitedCell(cells, 1, 1, directions)
-
-# Depth First Search
-# Starts at cell (1,1)
-print("\nTest of Depth First Search")
-
-# First Version of DFS
-# cellsNumber = mazeSize ^ 2 - (mazeSize * 4 + 2)
-# path = [(1, 1)]
-# path = DFS(cells, path, 1, 1, directions, cellsNumber)
-# print("First version of DFS:", path)
-# print(cells)
 
 # Second Version of DFS
+link = []
 path = {
     (1, 1): 'path'
-    }
-DFS_bis(path, 1, 1)
+}
+DFS_bis(path, link, 1, 1)
 print("Second version of DFS:", path)
 print("len of path", len(path))
 
 cells.sort()
 print("FINAL Cells:", cells)
 print("len of cells", len(cells))
+
+# Arretes entre les cases
+print("Link between cells:", link)
