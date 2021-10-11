@@ -36,7 +36,7 @@ def initVisitedCells():
     # Add walls to visited cells list
     cells = [
         (1, 1),
-        (- 2, - 2)
+        (mazeSize - 2, mazeSize - 2)
     ]
 
     # line 0
@@ -51,17 +51,28 @@ def initVisitedCells():
 
     # line mazesize - 1
     for j in range(mazeSize):
-        if (- 1, j) not in cells:
-            cells.append((- 1, j))
+        if (mazeSize - 1, j) not in cells:
+            cells.append((mazeSize - 1, j))
 
     # column mazesize - 1
     for i in range(mazeSize):
-        if (i, - 1) not in cells:
-            cells.append((i, - 1))
+        if (i, mazeSize - 1) not in cells:
+            cells.append((i, mazeSize - 1))
 
     print("Visited cells initialisation:", cells, "\n")
     cells.sort()
     return cells
+
+
+def invertDir(d):
+    if d == 'up':
+        return 'down'
+    if d == 'down':
+        return 'up'
+    if d == 'left':
+        return 'right'
+    if d == 'right':
+        return 'left'
 
 
 def get_neighbours(i, j):
@@ -80,32 +91,25 @@ def get_neighbours(i, j):
     return neighbours
 
 
-def invertDir(d):
-    if d == 'up':
-        return 'down'
-    if d == 'down':
-        return 'up'
-    if d == 'left':
-        return 'right'
-    if d == 'right':
-        return 'left'
-
-
 def breakableWalls(neighbours, walls, tup, i, j):
     # Adds taken direction to breakable walls
     for key in list(neighbours):
         if neighbours[key] == tup:
             # Current Cell and direction taken
             if (i, j) not in walls:
-                walls[(i, j)].append(key)
+                walls[(i, j)] = [key]
+                return walls
             elif key not in walls[(i, j)]:
                 walls[(i, j)].append(key)
+                return walls
 
             # Next Cell and direction inverted
             if tup not in walls:
+                walls[tup] = [invertDir(key)]
+                return walls
+            elif key not in walls[tup]:
                 walls[tup].append(invertDir(key))
-            elif walls[tup].append(key):
-                walls[tup].append(invertDir(key))
+                return walls
 
 
 def DFS_bis(path, arretes, walls, i, j):
@@ -113,31 +117,30 @@ def DFS_bis(path, arretes, walls, i, j):
     print("current cell:", (i, j))
 
     neighbours = get_neighbours(i, j)
-
     coordinates = []
     for n in neighbours.values():
         coordinates.append(n)
-
     random.shuffle(coordinates)
 
     print("neighbours:", neighbours)
     for tup in coordinates:
         if tup not in cells:
             # Add to path
-            print("adds", tup, "to path")
-            print("cells in DFS: BEFORE APPEND", cells)
+            #print("adds", tup, "to path")
+            #print("cells in DFS: BEFORE APPEND", cells)
 
             path[tup] = tup
-            print("cells in DFS: AFTER APPEND", cells)
+            #print("cells in DFS: AFTER APPEND", cells)
 
             # Adds breakableWalls
-            breakableWalls(neighbours, walls, tup, i, j)
+            walls = breakableWalls(neighbours, walls, tup, i, j)
+            print("Walls", walls)
 
             # Links between cells for Kruskal later on
             # arretes.append(((i, j), tup))
 
             # Recursive call
-            DFS_bis(path, arretes, tup[0], tup[1])
+            DFS_bis(path, arretes, walls, tup[0], tup[1])
 
 
 ########################################################
