@@ -65,10 +65,11 @@ def writeMazeToFile():
 
 # Other version of DFS
 def get_neighbours(i, j):
-    neighbours = [(i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1)]
-    for n in neighbours:
-        if 0 in n or -1 in n:
-            neighbours.remove(n)
+    # ERROR : cant access tuple and check if Out of bounds bc changed to dictionary
+    neighbours = {(i - 1, j): 'up', (i + 1, j): 'down', (i, j - 1): 'left', (i, j + 1): 'right'}
+    for tup in neighbours.keys():
+        if 0 in tup or -1 in tup:
+            neighbours.pop(tup)
     return neighbours
 
 
@@ -83,7 +84,7 @@ def DFS_bis(path, arretes, i, j):
         if (x, y) not in cells:
             print("adds", (x, y), "to path")
             print("cells in DFS: BEFORE APPEND", cells)
-            path[(x, y)] = 'path'
+            path[(x, y)] = neighbours[(x, y)]
             print("cells in DFS: AFTER APPEND", cells)
             arretes.append(((i, j), (x, y)))
             DFS_bis(path, arretes, x, y)
@@ -119,7 +120,7 @@ print("Link between cells:", link)
 
 # NOTES POUR LA SUITE
 # on crée un dictionnaire path qui prend en item
-# une cellule (coordonnées) et ses murs qui sont cassés
+# une cellule (coordonnées) et ses murs qui sont cassés ( maximum 2 puisque verif visited or not)
 # exemple :path = ( (1,1): left, right)
 # a chaque deplacement de cellule on note la direction prise et
 # on lui casse le mur dans le dico path ->
