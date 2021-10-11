@@ -59,7 +59,6 @@ def initVisitedCells():
         if (i, mazeSize - 1) not in cells:
             cells.append((i, mazeSize - 1))
 
-    print("Visited cells initialisation:", cells, "\n")
     cells.sort()
     return cells
 
@@ -84,10 +83,12 @@ def get_neighbours(i, j):
     }
     coordinates = [(i - 2, j), (i + 2, j), (i, j - 2), (i, j + 2)]
     for tup in coordinates:
-        if 0 in tup or -1 in tup:
-            for key in list(neighbours):
-                if neighbours[key] == tup:
-                    del neighbours[key]
+        print("x : ", tup[0], "y: ", tup[1])
+        if 0 >= tup[0] >= mazeSize - 1:
+            if 0 >= tup[1] >= mazeSize - 1:
+                for key in list(neighbours):
+                    if neighbours[key] == tup:
+                        del neighbours[key]
     return neighbours
 
 
@@ -128,7 +129,6 @@ def DFS_bis(path, arretes, walls, i, j):
             # Add to path
             #print("adds", tup, "to path")
             #print("cells in DFS: BEFORE APPEND", cells)
-
             path[tup] = tup
             #print("cells in DFS: AFTER APPEND", cells)
 
