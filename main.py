@@ -12,9 +12,9 @@ def init_labyrinth():
     labyrinth[0][0] = ' '
     labyrinth[1][0] = ' '
     labyrinth[1][1] = ' '
-    labyrinth[size - 1][size - 1] = ' '
-    labyrinth[size - 2][size - 1] = ' '
-    labyrinth[size - 2][size - 2] = ' '
+    labyrinth[- 1][- 1] = ' '
+    labyrinth[- 2][- 1] = ' '
+    labyrinth[- 2][- 2] = ' '
 
     print(labyrinth, "\n")
     return labyrinth
@@ -65,18 +65,10 @@ def writeMazeToFile():
 
 # Other version of DFS
 def get_neighbours(i, j):
-    neighbours = []
-    if i != 0:
-        neighbours.append((i - 1, j))
-
-    if i != mazeSize - 2:
-        neighbours.append((i + 1, j))
-
-    if j != 0:
-        neighbours.append((i, j - 1))
-
-    if j != mazeSize - 2:
-        neighbours.append((i, j + 1))
+    neighbours = [(i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1)]
+    for n in neighbours:
+        if 0 in n or -1 in n:
+            neighbours.remove(n)
     return neighbours
 
 
@@ -110,7 +102,7 @@ print("init cells:", cells)
 # Second Version of DFS
 link = []
 path = {
-    (1, 1): 'path'
+    (1, 1): []
 }
 DFS_bis(path, link, 1, 1)
 print("Second version of DFS:", path)
@@ -122,3 +114,13 @@ print("len of cells", len(cells))
 
 # Arretes entre les cases
 print("Link between cells:", link)
+
+
+
+# NOTES POUR LA SUITE
+# on crée un dictionnaire path qui prend en item
+# une cellule (coordonnées) et ses murs qui sont cassés
+# exemple :path = ( (1,1): left, right)
+# a chaque deplacement de cellule on note la direction prise et
+# on lui casse le mur dans le dico path ->
+# on fait de meme pour le mur opposé de la case suivante
