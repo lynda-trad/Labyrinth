@@ -84,11 +84,10 @@ def get_neighbours(i, j):
     coordinates = [(i - 2, j), (i + 2, j), (i, j - 2), (i, j + 2)]
     for tup in coordinates:
         print("x : ", tup[0], "y: ", tup[1])
-        if 0 >= tup[0] >= mazeSize - 1:
-            if 0 >= tup[1] >= mazeSize - 1:
-                for key in list(neighbours):
-                    if neighbours[key] == tup:
-                        del neighbours[key]
+        if 0 >= tup[0] or tup[0] >= mazeSize - 1 or 0 >= tup[1] or tup[1] >= mazeSize - 1:
+            for key in list(neighbours):
+                if neighbours[key] == tup:
+                    del neighbours[key]
     return neighbours
 
 
@@ -169,6 +168,9 @@ print("len of cells", len(cells))
 
 # Arretes entre les cases
 print("Link between cells:", link)
+
+# Breakable Walls
+print("Walls:", walls)
 
 # NOTES POUR LA SUITE
 # on crée un dictionnaire path qui prend en item
