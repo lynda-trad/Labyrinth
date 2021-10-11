@@ -3,18 +3,29 @@ from os.path import exists
 import numpy as np
 
 
+# Writes labyrinth to file
+def writeMazeToFile():
+    filename = input("Entrez un nom de fichier\n")
+    if not exists(filename):
+        file = open(filename, "a+")
+    else:
+        file = open(filename, "w")
+    labyrinth.tofile(file, '', '%s')
+    file.close()
+
+
 # Initializes labyrinth for printing
 def init_labyrinth():
     num = int(input("Entrez la taille du labyrinthe\n"))
     size = num * 2 + 1
     labyrinth = np.tile('#', (size, size))
 
-    labyrinth[0][0] = ' '
-    labyrinth[1][0] = ' '
-    labyrinth[1][1] = ' '
-    labyrinth[- 1][- 1] = ' '
-    labyrinth[- 2][- 1] = ' '
-    labyrinth[- 2][- 2] = ' '
+    labyrinth[0][0] = '.'
+    labyrinth[1][0] = '.'
+    labyrinth[1][1] = '.'
+    labyrinth[- 1][- 1] = '.'
+    labyrinth[- 2][- 1] = '.'
+    labyrinth[- 2][- 2] = '.'
 
     print(labyrinth, "\n")
     return labyrinth
@@ -25,7 +36,7 @@ def initVisitedCells():
     # Add walls to visited cells list
     cells = [
         (1, 1),
-        (mazeSize - 2, mazeSize - 2)
+        (- 2, - 2)
     ]
 
     # line 0
@@ -40,57 +51,93 @@ def initVisitedCells():
 
     # line mazesize - 1
     for j in range(mazeSize):
-        if (mazeSize - 1, j) not in cells:
-            cells.append((mazeSize - 1, j))
+        if (- 1, j) not in cells:
+            cells.append((- 1, j))
 
     # column mazesize - 1
     for i in range(mazeSize):
-        if (i, mazeSize - 1) not in cells:
-            cells.append((i, mazeSize - 1))
+        if (i, - 1) not in cells:
+            cells.append((i, - 1))
 
     print("Visited cells initialisation:", cells, "\n")
     cells.sort()
     return cells
 
 
-def writeMazeToFile():
-    filename = input("Entrez un nom de fichier\n")
-    if not exists(filename):
-        file = open(filename, "a+")
-    else:
-        file = open(filename, "w")
-    labyrinth.tofile(file, '', '%s')
-    file.close()
-
-
-# Other version of DFS
 def get_neighbours(i, j):
-    # ERROR : cant access tuple and check if Out of bounds bc changed to dictionary
-    neighbours = {(i - 1, j): 'up', (i + 1, j): 'down', (i, j - 1): 'left', (i, j + 1): 'right'}
-    for tup in neighbours.keys():
+    neighbours = {
+        'up': (i - 2, j),
+        'down': (i + 2, j),
+        'left': (i, j - 2),
+        'right': (i, j + 2)
+    }
+    coordinates = [(i - 2, j), (i + 2, j), (i, j - 2), (i, j + 2)]
+    for tup in coordinates:
         if 0 in tup or -1 in tup:
-            neighbours.pop(tup)
+            for key in list(neighbours):
+                if neighbours[key] == tup:
+                    del neighbours[key]
     return neighbours
 
 
-def DFS_bis(path, arretes, i, j):
+def invertDir(d):
+    if d == 'up':
+        return 'down'
+    if d == 'down':
+        return 'up'
+    if d == 'left':
+        return 'right'
+    if d == 'right':
+        return 'left'
+
+
+def breakableWalls(neighbours, walls, tup, i, j):
+    # Adds taken direction to breakable walls
+    for key in list(neighbours):
+        if neighbours[key] == tup:
+            # Current Cell and direction taken
+            if (i, j) not in walls:
+                walls[(i, j)].append(key)
+            elif key not in walls[(i, j)]:
+                walls[(i, j)].append(key)
+
+            # Next Cell and direction inverted
+            if tup not in walls:
+                walls[tup].append(invertDir(key))
+            elif walls[tup].append(key):
+                walls[tup].append(invertDir(key))
+
+
+def DFS_bis(path, arretes, walls, i, j):
     cells.append((i, j))
     print("current cell:", (i, j))
+
     neighbours = get_neighbours(i, j)
-    random.shuffle(neighbours)
+
+    coordinates = []
+    for n in neighbours.values():
+        coordinates.append(n)
+
+    random.shuffle(coordinates)
 
     print("neighbours:", neighbours)
-    for (x, y) in neighbours:
-        if (x, y) not in cells:
-            print("adds", (x, y), "to path")
+    for tup in coordinates:
+        if tup not in cells:
+            # Add to path
+            print("adds", tup, "to path")
             print("cells in DFS: BEFORE APPEND", cells)
-            path[(x, y)] = neighbours[(x, y)]
+
+            path[tup] = tup
             print("cells in DFS: AFTER APPEND", cells)
-            arretes.append(((i, j), (x, y)))
-            DFS_bis(path, arretes, x, y)
-        # elif (x, y) == neighbours[len(neighbours) - 1]:
-        # cul de sac
-        # path[(i, j)] = 'stop'
+
+            # Adds breakableWalls
+            breakableWalls(neighbours, walls, tup, i, j)
+
+            # Links between cells for Kruskal later on
+            # arretes.append(((i, j), tup))
+
+            # Recursive call
+            DFS_bis(path, arretes, tup[0], tup[1])
 
 
 ########################################################
@@ -99,13 +146,17 @@ mazeSize = len(labyrinth)
 cells = initVisitedCells()
 print("init cells:", cells)
 
-
 # Second Version of DFS
 link = []
 path = {
     (1, 1): []
 }
-DFS_bis(path, link, 1, 1)
+
+walls = {
+    (1, 1): []
+}
+
+DFS_bis(path, link, walls, 1, 1)
 print("Second version of DFS:", path)
 print("len of path", len(path))
 
@@ -115,8 +166,6 @@ print("len of cells", len(cells))
 
 # Arretes entre les cases
 print("Link between cells:", link)
-
-
 
 # NOTES POUR LA SUITE
 # on crée un dictionnaire path qui prend en item
