@@ -186,7 +186,7 @@ def resolution(path, res, i, j, realP, pDone):
             print(path)
             print("\nRealpath from outerscope", realP, '\n')
             resolution(path, res, tup[0], tup[1], realP, pDone)
-        elif tup == coordinates[len(coordinates) - 1] and res[tup[0]][tup[1]] == 'O' and res[tup[0]][tup[1]] != '.':
+        elif tup == coordinates[len(coordinates) - 1] and res[tup[0]][tup[1]] == 'O' and res[tup[0]][tup[1]] != '.' and tup != (len(res) - 2, len(res) - 2):
             # Back tracking when you can't move forward anymore
             # pop doesnt remove cells at every iteration
             if len(path) != 0:
@@ -229,6 +229,7 @@ lab = printLabyrinth(labyrinth)
 print(lab)
 
 # Resolution
+# Works on small labyrinth but fails to pop the wrong path on bigger labyrinth
 print("Resolution:", path)
 print("Len of resolution path", len(path))
 res = numpy.copy(labyrinth)
