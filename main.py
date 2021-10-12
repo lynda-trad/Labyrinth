@@ -26,7 +26,7 @@ def writeMazeToFile(lab):
 # Initializes labyrinth for printing
 def initLabyrinth():
     num = int(input("Please enter labyrinth size between 0 and 50\n"))
-    while num <= 0 or num >= 50:
+    while num <= 0 or num > 50:
         num = int(input("Please enter labyrinth size between 0 and 50\n"))
     size = num * 2 + 1
     labyrinth = np.tile('#', (size, size))
@@ -155,18 +155,9 @@ def DFS_bis(link, walls, i, j):
             # Recursive call
             DFS_bis(link, walls, tup[0], tup[1])
 
-def addWallToRes(neighbours, tup, res):
-    for key in list(neighbours):
-        if neighbours[key] == tup:
-            if key == 'up':
-                return
-            #elif key == 'down':
-            #elif key == 'left':
-            #elif key == 'right':
 
-
-def resolution(path, res, i, j):
-    res[i][j] = 'O'  # mark current cell as visited
+def resolution(path, res, i, j, realPath):
+    res[i][j] = 'O'  # marks current cell as visited
     print("current cell:", (i, j))
 
     neighbours = get_neighbours(i, j, 1)
@@ -175,27 +166,30 @@ def resolution(path, res, i, j):
         coordinates.append(n)
     random.shuffle(coordinates)
 
+    # if we did not reach the end yet
+
     for tup in coordinates:
         # not visited yet '.' & not a wall '#'
         if res[tup[0]][tup[1]] != 'O' and res[tup[0]][tup[1]] == '.':
             # If end cell is reached
             if tup == (len(res) - 2, len(res) - 2):
-                print(path)
-                return path
+                res[tup[0]][tup[1]] = 'O'
+                realPath = path.copy()
+                realPath.append((len(res) - 2, len(res) - 2))
+                print("\nReal path that needs to be returned :", realPath, '\n')
+                return realPath
+
             # Add to path
             path.append(tup)
-            # Add cell next to to path as well
-            #addWallToRes(neighbours, tup, res)
 
             # Recursive call
             print(path)
-            resolution(path, res, tup[0], tup[1])
+            resolution(path, res, tup[0], tup[1], realPath)
         elif tup == coordinates[len(coordinates) - 1] and res[tup[0]][tup[1]] == 'O' and res[tup[0]][tup[1]] != '.':
             # Back tracking when you can't move forward anymore
+            # pop doesnt remove cells at every iteration
             if len(path) != 0:
                 path.pop(- 1)
-                path.pop(- 2)
-
 
 
 ########################################################
@@ -237,8 +231,11 @@ print(lab)
 print("Resolution:", path)
 print("Len of resolution path", len(path))
 res = numpy.copy(labyrinth)
-resolution(path, res, 1, 1)
+
+realPath = []
+realPath = resolution(path, res, 1, 1, realPath)
+
 print("Checking if res checks every cell possible")
 print(printLabyrinth(res))
 
-print("Resolution path :", path)
+print("Resolution path :", realPath)
