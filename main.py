@@ -10,9 +10,6 @@ def writeMazeToFile(lab):
         file = open(filename, "a+")
     else:
         file = open(filename, "w")
-    # Numpy to file
-    labyrinth.tofile(file, '', '%s')
-    # Print lab to file
     file.write(lab)
     file.close()
 
@@ -34,12 +31,13 @@ def initLabyrinth():
     return labyrinth
 
 
+# Appends a string to print labyrinth
 def printLabyrinth(labyrinth):
     lab = ""
     for i in range(len(labyrinth)):
         for j in range(len(labyrinth)):
             if labyrinth[i][j] == '.':
-                lab += ' ' + labyrinth[i][j] + ' '
+                lab += '' + labyrinth[i][j] + ''
             else:
                 lab += '' + (labyrinth[i][j]) + ''
         lab += '\n'
