@@ -1,33 +1,41 @@
 import random
 from os.path import exists
+
+import numpy
 import numpy as np
+import sys
+
+sys.setrecursionlimit(1500)
 
 
 # Writes labyrinth to file
 def writeMazeToFile(lab):
-    filename = input("Entrez un nom de fichier\n")
+    filename = input("Please enter a filename.\n")
     if not exists(filename):
         file = open(filename, "a+")
     else:
         file = open(filename, "w")
-    file.write(lab)
+    if file.write(lab):
+        print("-- Printing complete! --")
+    else:
+        print("Impossible to write to file", filename, "...")
+        writeMazeToFile()
     file.close()
 
 
 # Initializes labyrinth for printing
 def initLabyrinth():
-    num = int(input("Entrez la taille du labyrinthe\n"))
+    num = int(input("Please enter labyrinth size between 0 and 50\n"))
+    while num <= 0 or num >= 50:
+        num = int(input("Please enter labyrinth size between 0 and 50\n"))
     size = num * 2 + 1
     labyrinth = np.tile('#', (size, size))
-
     labyrinth[0][0] = '.'
     labyrinth[1][0] = '.'
     labyrinth[1][1] = '.'
-    labyrinth[- 1][- 1] = '.'
-    labyrinth[- 2][- 1] = '.'
-    labyrinth[- 2][- 2] = '.'
-
-    print(labyrinth, "\n")
+    labyrinth[-1][-1] = '.'
+    labyrinth[-2][-1] = '.'
+    labyrinth[-2][-2] = '.'
     return labyrinth
 
 
@@ -73,7 +81,7 @@ def initVisitedCells():
     return cells
 
 
-def invertDir(d):
+def invertDirection(d):
     if d == 'up':
         return 'down'
     if d == 'down':
@@ -93,7 +101,7 @@ def get_neighbours(i, j):
     }
     coordinates = [(i - 2, j), (i + 2, j), (i, j - 2), (i, j + 2)]
     for tup in coordinates:
-        print("x : ", tup[0], "y: ", tup[1])
+        # print("x : ", tup[0], "y: ", tup[1])
         if 0 >= tup[0] or tup[0] >= mazeSize - 1 or 0 >= tup[1] or tup[1] >= mazeSize - 1:
             for key in list(neighbours):
                 if neighbours[key] == tup:
@@ -105,45 +113,29 @@ def breakableWalls(neighbours, walls, tup, i, j):
     # Adds taken direction to breakable walls
     for key in list(neighbours):
         if neighbours[key] == tup:
-
             if key == 'up':
                 labyrinth[i][j] = '.'  # current cell
                 labyrinth[i - 1][j] = '.'  # cell between the neighbours
                 labyrinth[tup[0]][tup[1]] = '.'  # next cell
             elif key == 'down':
-                labyrinth[i][j] = '.'  # current cell
-                labyrinth[i + 1][j] = '.'  # cell between the neighbours
-                labyrinth[tup[0]][tup[1]] = '.'  # next cell
+                labyrinth[i][j] = '.'
+                labyrinth[i + 1][j] = '.'
+                labyrinth[tup[0]][tup[1]] = '.'
             elif key == 'left':
-                labyrinth[i][j] = '.'  # current cell
-                labyrinth[i][j - 1] = '.'  # cell between the neighbours
-                labyrinth[tup[0]][tup[1]] = '.'  # next cell
+                labyrinth[i][j] = '.'
+                labyrinth[i][j - 1] = '.'
+                labyrinth[tup[0]][tup[1]] = '.'
             elif key == 'right':
-                labyrinth[i][j] = '.'  # current cell
-                labyrinth[i][j + 1] = '.'  # cell between the neighbours
-                labyrinth[tup[0]][tup[1]] = '.'  # next cell
-
-            # List of breakable walls
-            # Current Cell and direction taken
-            if (i, j) not in walls:
-                walls[(i, j)] = [key]
-                return walls
-            elif key not in walls[(i, j)]:
-                walls[(i, j)].append(key)
-                return walls
-
-            # Next Cell and direction inverted
-            if tup not in walls:
-                walls[tup] = [invertDir(key)]
-                return walls
-            elif key not in walls[tup]:
-                walls[tup].append(invertDir(key))
-                return walls
+                labyrinth[i][j] = '.'
+                labyrinth[i][j + 1] = '.'
+                labyrinth[tup[0]][tup[1]] = '.'
+            else:
+                print("Error, key is invalid")
 
 
 def DFS_bis(path, arretes, walls, i, j):
     cells.append((i, j))
-    print("current cell:", (i, j))
+    # print("current cell:", (i, j))
 
     neighbours = get_neighbours(i, j)
     coordinates = []
@@ -151,15 +143,15 @@ def DFS_bis(path, arretes, walls, i, j):
         coordinates.append(n)
     random.shuffle(coordinates)
 
-    print("neighbours:", neighbours)
+    # print("neighbours:", neighbours)
     for tup in coordinates:
         if tup not in cells:
             # Add to path
-            path[tup] = tup
+            #path[tup] = tup
 
             # Adds breakableWalls
             walls = breakableWalls(neighbours, walls, tup, i, j)
-            print("Walls", walls)
+            # print("Walls", walls)
 
             # Links between cells for Kruskal later on
             # arretes.append(((i, j), tup))
@@ -168,43 +160,70 @@ def DFS_bis(path, arretes, walls, i, j):
             DFS_bis(path, arretes, walls, tup[0], tup[1])
 
 
+def resolution(path, res, i, j):
+    res[i][j] = 'O'  # mark current cell as visited
+    print("current cell:", (i, j))
+
+    neighbours = get_neighbours(i, j)
+    coordinates = []
+    for n in neighbours.values():
+        coordinates.append(n)
+    random.shuffle(coordinates)
+
+    for tup in coordinates:
+        # not visited yet '.' & not a wall '#'
+        if res[tup[0]][tup[1]] != 'O' and res[tup[0]][tup[1]] == '.':
+            # Add to path
+            path.append(tup)
+            # Recursive call
+            resolution(path, res, tup[0], tup[1])
+        elif tup == coordinates[len(coordinates) - 1] and res[tup[0]][tup[1]] == 'O' and res[tup[0]][tup[1]] != '.':
+            # Back tracking when you can't move forward anymore
+            if len(path) != 0:
+                path.pop(- 1)
+
+
 ########################################################
 labyrinth = initLabyrinth()
 mazeSize = len(labyrinth)
 cells = initVisitedCells()
-print("init cells:", cells)
+# print("init cells:", cells)
 
 # DFS
+path = [
+    (1, 1)
+]
 link = []
-path = {
-    (1, 1): []
-}
 
 walls = {
     (1, 1): []
 }
 
+print("-- Generating the labyrinth, please wait! --")
 DFS_bis(path, link, walls, 1, 1)
-print("Second version of DFS:", path)
-print("len of path", len(path))
 
 # Visited cells
-cells.sort()
-print("FINAL Cells:", cells)
-print("len of cells", len(cells))
+# cells.sort()
+# print("FINAL Cells:", cells)
+# print("len of cells", len(cells))
 
 # Link between cells -> Kruskal
-print("Link between cells:", link)
+# print("Link between cells:", link)
 
 # Breakable Walls
-print("Walls:", walls)
+# print("Walls:", walls)
 
 # Printing the labyrinth
-print("Function printLabyrinth : ")
+print("Printing labyrinth : ")
 lab = printLabyrinth(labyrinth)
 print(lab)
 
-print("Labyrinth:\n", labyrinth)
+# Resolution
+print("Resolution:", path)
+print("Len of resolution path", len(path))
+res = numpy.copy(labyrinth)
+resolution(path, res, 1, 1)
+print("Checking if res checks every cell possible")
+print(printLabyrinth(res))
 
-# Printing to file
-writeMazeToFile(lab)
+print("Resolution path :", path)
