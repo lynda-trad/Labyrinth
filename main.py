@@ -156,7 +156,7 @@ def DFS_bis(link, walls, i, j):
             DFS_bis(link, walls, tup[0], tup[1])
 
 
-def resolution(path, res, i, j, realPath):
+def resolution(path, res, i, j, realP, pDone):
     res[i][j] = 'O'  # marks current cell as visited
     print("current cell:", (i, j))
 
@@ -172,19 +172,20 @@ def resolution(path, res, i, j, realPath):
         # not visited yet '.' & not a wall '#'
         if res[tup[0]][tup[1]] != 'O' and res[tup[0]][tup[1]] == '.':
             # If end cell is reached
-            if tup == (len(res) - 2, len(res) - 2):
+            if tup == (len(res) - 2, len(res) - 2) and not pDone:
                 res[tup[0]][tup[1]] = 'O'
-                realPath = path.copy()
+                # Copying path into realPath
+                for coord in path:
+                    realPath.append(coord)
                 realPath.append((len(res) - 2, len(res) - 2))
-                print("\nReal path that needs to be returned :", realPath, '\n')
-                return realPath
 
             # Add to path
             path.append(tup)
 
             # Recursive call
             print(path)
-            resolution(path, res, tup[0], tup[1], realPath)
+            print("\nRealpath from outerscope", realP, '\n')
+            resolution(path, res, tup[0], tup[1], realP, pDone)
         elif tup == coordinates[len(coordinates) - 1] and res[tup[0]][tup[1]] == 'O' and res[tup[0]][tup[1]] != '.':
             # Back tracking when you can't move forward anymore
             # pop doesnt remove cells at every iteration
@@ -233,7 +234,7 @@ print("Len of resolution path", len(path))
 res = numpy.copy(labyrinth)
 
 realPath = []
-realPath = resolution(path, res, 1, 1, realPath)
+resolution(path, res, 1, 1, realPath, False)
 
 print("Checking if res checks every cell possible")
 print(printLabyrinth(res))
