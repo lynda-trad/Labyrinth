@@ -92,14 +92,14 @@ def invertDirection(d):
         return 'left'
 
 
-def get_neighbours(i, j):
+def get_neighbours(i, j, inc):
     neighbours = {
-        'up': (i - 2, j),
-        'down': (i + 2, j),
-        'left': (i, j - 2),
-        'right': (i, j + 2)
+        'up': (i - inc, j),
+        'down': (i + inc, j),
+        'left': (i, j - inc),
+        'right': (i, j + inc)
     }
-    coordinates = [(i - 2, j), (i + 2, j), (i, j - 2), (i, j + 2)]
+    coordinates = [(i - inc, j), (i + inc, j), (i, j - inc), (i, j + inc)]
     for tup in coordinates:
         # print("x : ", tup[0], "y: ", tup[1])
         if 0 >= tup[0] or tup[0] >= mazeSize - 1 or 0 >= tup[1] or tup[1] >= mazeSize - 1:
@@ -109,7 +109,7 @@ def get_neighbours(i, j):
     return neighbours
 
 
-def breakableWalls(neighbours, walls, tup, i, j):
+def breakableWalls(neighbours, tup, i, j):
     # Adds taken direction to breakable walls
     for key in list(neighbours):
         if neighbours[key] == tup:
@@ -133,11 +133,11 @@ def breakableWalls(neighbours, walls, tup, i, j):
                 print("Error, key is invalid")
 
 
-def DFS_bis(path, arretes, walls, i, j):
+def DFS_bis(link, walls, i, j):
     cells.append((i, j))
     # print("current cell:", (i, j))
 
-    neighbours = get_neighbours(i, j)
+    neighbours = get_neighbours(i, j, 2)
     coordinates = []
     for n in neighbours.values():
         coordinates.append(n)
@@ -146,25 +146,30 @@ def DFS_bis(path, arretes, walls, i, j):
     # print("neighbours:", neighbours)
     for tup in coordinates:
         if tup not in cells:
-            # Add to path
-            #path[tup] = tup
-
-            # Adds breakableWalls
-            walls = breakableWalls(neighbours, walls, tup, i, j)
-            # print("Walls", walls)
+            # Breaks walls
+            breakableWalls(neighbours, tup, i, j)
 
             # Links between cells for Kruskal later on
-            # arretes.append(((i, j), tup))
+            # link.append(((i, j), tup))
 
             # Recursive call
-            DFS_bis(path, arretes, walls, tup[0], tup[1])
+            DFS_bis(link, walls, tup[0], tup[1])
+
+def addWallToRes(neighbours, tup, res):
+    for key in list(neighbours):
+        if neighbours[key] == tup:
+            if key == 'up':
+                return
+            #elif key == 'down':
+            #elif key == 'left':
+            #elif key == 'right':
 
 
 def resolution(path, res, i, j):
     res[i][j] = 'O'  # mark current cell as visited
     print("current cell:", (i, j))
 
-    neighbours = get_neighbours(i, j)
+    neighbours = get_neighbours(i, j, 1)
     coordinates = []
     for n in neighbours.values():
         coordinates.append(n)
@@ -173,14 +178,24 @@ def resolution(path, res, i, j):
     for tup in coordinates:
         # not visited yet '.' & not a wall '#'
         if res[tup[0]][tup[1]] != 'O' and res[tup[0]][tup[1]] == '.':
+            # If end cell is reached
+            if tup == (len(res) - 2, len(res) - 2):
+                print(path)
+                return path
             # Add to path
             path.append(tup)
+            # Add cell next to to path as well
+            #addWallToRes(neighbours, tup, res)
+
             # Recursive call
+            print(path)
             resolution(path, res, tup[0], tup[1])
         elif tup == coordinates[len(coordinates) - 1] and res[tup[0]][tup[1]] == 'O' and res[tup[0]][tup[1]] != '.':
             # Back tracking when you can't move forward anymore
             if len(path) != 0:
                 path.pop(- 1)
+                path.pop(- 2)
+
 
 
 ########################################################
@@ -200,7 +215,7 @@ walls = {
 }
 
 print("-- Generating the labyrinth, please wait! --")
-DFS_bis(path, link, walls, 1, 1)
+DFS_bis(link, walls, 1, 1)
 
 # Visited cells
 # cells.sort()
