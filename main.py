@@ -4,18 +4,21 @@ import numpy as np
 
 
 # Writes labyrinth to file
-def writeMazeToFile():
+def writeMazeToFile(lab):
     filename = input("Entrez un nom de fichier\n")
     if not exists(filename):
         file = open(filename, "a+")
     else:
         file = open(filename, "w")
+    # Numpy to file
     labyrinth.tofile(file, '', '%s')
+    # Print lab to file
+    file.write(lab)
     file.close()
 
 
 # Initializes labyrinth for printing
-def init_labyrinth():
+def initLabyrinth():
     num = int(input("Entrez la taille du labyrinthe\n"))
     size = num * 2 + 1
     labyrinth = np.tile('#', (size, size))
@@ -31,13 +34,22 @@ def init_labyrinth():
     return labyrinth
 
 
+def printLabyrinth(labyrinth):
+    lab = ""
+    for i in range(len(labyrinth)):
+        for j in range(len(labyrinth)):
+            if labyrinth[i][j] == '.':
+                lab += ' ' + labyrinth[i][j] + ' '
+            else:
+                lab += '' + (labyrinth[i][j]) + ''
+        lab += '\n'
+    return lab
+
+
 # Initializes visited cell list
 def initVisitedCells():
     # Add walls to visited cells list
-    cells = [
-        (1, 1),
-        (mazeSize - 2, mazeSize - 2)
-    ]
+    cells = []
 
     # line 0
     for j in range(mazeSize):
@@ -95,6 +107,25 @@ def breakableWalls(neighbours, walls, tup, i, j):
     # Adds taken direction to breakable walls
     for key in list(neighbours):
         if neighbours[key] == tup:
+
+            if key == 'up':
+                labyrinth[i][j] = '.'  # current cell
+                labyrinth[i - 1][j] = '.'  # cell between the neighbours
+                labyrinth[tup[0]][tup[1]] = '.'  # next cell
+            elif key == 'down':
+                labyrinth[i][j] = '.'  # current cell
+                labyrinth[i + 1][j] = '.'  # cell between the neighbours
+                labyrinth[tup[0]][tup[1]] = '.'  # next cell
+            elif key == 'left':
+                labyrinth[i][j] = '.'  # current cell
+                labyrinth[i][j - 1] = '.'  # cell between the neighbours
+                labyrinth[tup[0]][tup[1]] = '.'  # next cell
+            elif key == 'right':
+                labyrinth[i][j] = '.'  # current cell
+                labyrinth[i][j + 1] = '.'  # cell between the neighbours
+                labyrinth[tup[0]][tup[1]] = '.'  # next cell
+
+            # List of breakable walls
             # Current Cell and direction taken
             if (i, j) not in walls:
                 walls[(i, j)] = [key]
@@ -126,10 +157,7 @@ def DFS_bis(path, arretes, walls, i, j):
     for tup in coordinates:
         if tup not in cells:
             # Add to path
-            #print("adds", tup, "to path")
-            #print("cells in DFS: BEFORE APPEND", cells)
             path[tup] = tup
-            #print("cells in DFS: AFTER APPEND", cells)
 
             # Adds breakableWalls
             walls = breakableWalls(neighbours, walls, tup, i, j)
@@ -143,12 +171,12 @@ def DFS_bis(path, arretes, walls, i, j):
 
 
 ########################################################
-labyrinth = init_labyrinth()
+labyrinth = initLabyrinth()
 mazeSize = len(labyrinth)
 cells = initVisitedCells()
 print("init cells:", cells)
 
-# Second Version of DFS
+# DFS
 link = []
 path = {
     (1, 1): []
@@ -162,20 +190,23 @@ DFS_bis(path, link, walls, 1, 1)
 print("Second version of DFS:", path)
 print("len of path", len(path))
 
+# Visited cells
 cells.sort()
 print("FINAL Cells:", cells)
 print("len of cells", len(cells))
 
-# Arretes entre les cases
+# Link between cells -> Kruskal
 print("Link between cells:", link)
 
 # Breakable Walls
 print("Walls:", walls)
 
-# NOTES POUR LA SUITE
-# on crée un dictionnaire path qui prend en item
-# une cellule (coordonnées) et ses murs qui sont cassés ( maximum 2 puisque verif visited or not)
-# exemple :path = ( (1,1): left, right)
-# a chaque deplacement de cellule on note la direction prise et
-# on lui casse le mur dans le dico path ->
-# on fait de meme pour le mur opposé de la case suivante
+# Printing the labyrinth
+print("Function printLabyrinth : ")
+lab = printLabyrinth(labyrinth)
+print(lab)
+
+print("Labyrinth:\n", labyrinth)
+
+# Printing to file
+writeMazeToFile(lab)
