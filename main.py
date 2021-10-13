@@ -24,6 +24,7 @@ def writeMazeToFile(lab):
         writeMazeToFile()
     file.close()
 
+
 ##################################################
 # Initialisation
 
@@ -34,7 +35,7 @@ def initLabyrinth():
     while num <= 0 or num > 50:
         num = int(input("Please enter labyrinth size between 0 and 50\n"))
     size = num * 2 + 1
-    labyrinth = np.tile('#', (size, size))
+    labyrinth = np.tile('|', (size, size))
     labyrinth[0][0] = '.'
     labyrinth[1][0] = '.'
     labyrinth[1][1] = '.'
@@ -55,6 +56,20 @@ def printLabyrinth(labyrinth):
                 stringLab += '' + (labyrinth[i][j]) + ''
         stringLab += '\n'
     return stringLab
+
+
+# Prints solution path
+def printSolutionPath(res, realPath):
+    res[0][0] = 'X'
+    res[1][0] = 'X'
+    res[1][1] = 'X'
+    res[-1][-1] = 'X'
+    res[-2][-1] = 'X'
+    res[-2][-2] = 'X'
+    for i in range(len(res)):
+        for j in range(len(res)):
+            if (i, j) in realPath:
+                res[i][j] = 'X'
 
 
 # Initializes visited cell list
@@ -124,4 +139,9 @@ print("Resolution path :", endingPath)
 print("Len of resolution path", len(endingPath))
 
 print("Checking if res checks every cell possible")
+print(printLabyrinth(res))
+
+# Printing solution path
+print("Solution path: ")
+printSolutionPath(res, endingPath)
 print(printLabyrinth(res))

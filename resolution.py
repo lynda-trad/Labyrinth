@@ -34,11 +34,12 @@ def resolutionCheck(coordinates, path, res, realPath, pDone):
             print("Current path:", path)
             print("\nRealpath from outerscope", realPath, '\n')
             resolution(path, res, tup[0], tup[1], realPath, pDone)
-        elif not pDone and popCondition(tup, coordinates, res):
+            path.pop(- 1)
+        #elif not pDone and popCondition(tup, coordinates, res):
             # Back tracking when you can't move forward anymore
             # ERROR : pop doesnt remove some cells
-            if len(path) != 0:
-                path.pop(- 1)
+        #    if len(path) != 0:
+                #path.pop(- 1)
 
 
 def checkEnding(tup, res, mazeSize, path, realPath, pDone):
