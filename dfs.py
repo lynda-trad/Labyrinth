@@ -5,7 +5,7 @@ sys.setrecursionlimit(1500)
 
 
 ##################################################
-# DFS
+# DFS of labyrinth
 
 # Invert the direction in parameter
 def invertDirection(d):

@@ -10,9 +10,6 @@ import resolution
 sys.setrecursionlimit(1500)
 
 
-##################################################
-# Initialisation
-
 # Writes labyrinth to file
 def writeMazeToFile(lab):
     filename = input("Please enter a filename.\n")
@@ -26,6 +23,9 @@ def writeMazeToFile(lab):
         print("Impossible to write to file", filename, "...")
         writeMazeToFile()
     file.close()
+
+##################################################
+# Initialisation
 
 
 # Initializes labyrinth for printing
@@ -46,44 +46,44 @@ def initLabyrinth():
 
 # Appends a string to print labyrinth
 def printLabyrinth(labyrinth):
-    lab = ""
+    stringLab = ""
     for i in range(len(labyrinth)):
         for j in range(len(labyrinth)):
             if labyrinth[i][j] == '.':
-                lab += '' + labyrinth[i][j] + ''
+                stringLab += '' + labyrinth[i][j] + ''
             else:
-                lab += '' + (labyrinth[i][j]) + ''
-        lab += '\n'
-    return lab
+                stringLab += '' + (labyrinth[i][j]) + ''
+        stringLab += '\n'
+    return stringLab
 
 
 # Initializes visited cell list
 def initVisitedCells():
     # Add walls to visited cells list
-    cells = []
+    cellsList = []
 
     # line 0
     for j in range(mazeSize):
-        if (0, j) not in cells:
-            cells.append((0, j))
+        if (0, j) not in cellsList:
+            cellsList.append((0, j))
 
     # column 0
     for i in range(mazeSize):
-        if (i, 0) not in cells:
-            cells.append((i, 0))
+        if (i, 0) not in cellsList:
+            cellsList.append((i, 0))
 
     # line mazesize - 1
     for j in range(mazeSize):
-        if (mazeSize - 1, j) not in cells:
-            cells.append((mazeSize - 1, j))
+        if (mazeSize - 1, j) not in cellsList:
+            cellsList.append((mazeSize - 1, j))
 
     # column mazesize - 1
     for i in range(mazeSize):
-        if (i, mazeSize - 1) not in cells:
-            cells.append((i, mazeSize - 1))
+        if (i, mazeSize - 1) not in cellsList:
+            cellsList.append((i, mazeSize - 1))
 
-    cells.sort()
-    return cells
+    cellsList.sort()
+    return cellsList
 
 
 ########################################################
@@ -92,9 +92,6 @@ mazeSize = len(labyrinth)
 cells = initVisitedCells()
 
 # DFS
-path = [
-    (1, 1)
-]
 link = []
 
 print("-- Generating the labyrinth, please wait! --")
@@ -115,14 +112,16 @@ print(lab)
 
 # Resolution
 # Works on small labyrinth but fails to pop the wrong path on bigger labyrinth
-print("Resolution:", path)
-print("Len of resolution path", len(path))
+path = [
+    (1, 1)
+]
+endingPath = []
 res = numpy.copy(labyrinth)
 
-realPath = []
-resolution.resolution(path, res, 1, 1, realPath, False, mazeSize)
+resolution.resolution(path, res, 1, 1, endingPath, False)
+
+print("Resolution path :", endingPath)
+print("Len of resolution path", len(endingPath))
 
 print("Checking if res checks every cell possible")
 print(printLabyrinth(res))
-
-print("Resolution path :", realPath)
