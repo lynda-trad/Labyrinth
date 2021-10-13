@@ -1,12 +1,17 @@
-import random
 from os.path import exists
 
 import numpy
 import numpy as np
 import sys
 
+import dfs
+import resolution
+
 sys.setrecursionlimit(1500)
 
+
+##################################################
+# Initialisation
 
 # Writes labyrinth to file
 def writeMazeToFile(lab):
@@ -81,123 +86,10 @@ def initVisitedCells():
     return cells
 
 
-def invertDirection(d):
-    if d == 'up':
-        return 'down'
-    if d == 'down':
-        return 'up'
-    if d == 'left':
-        return 'right'
-    if d == 'right':
-        return 'left'
-
-
-def get_neighbours(i, j, inc):
-    neighbours = {
-        'up': (i - inc, j),
-        'down': (i + inc, j),
-        'left': (i, j - inc),
-        'right': (i, j + inc)
-    }
-    coordinates = [(i - inc, j), (i + inc, j), (i, j - inc), (i, j + inc)]
-    for tup in coordinates:
-        # print("x : ", tup[0], "y: ", tup[1])
-        if 0 >= tup[0] or tup[0] >= mazeSize - 1 or 0 >= tup[1] or tup[1] >= mazeSize - 1:
-            for key in list(neighbours):
-                if neighbours[key] == tup:
-                    del neighbours[key]
-    return neighbours
-
-
-def breakableWalls(neighbours, tup, i, j):
-    # Adds taken direction to breakable walls
-    for key in list(neighbours):
-        if neighbours[key] == tup:
-            if key == 'up':
-                labyrinth[i][j] = '.'  # current cell
-                labyrinth[i - 1][j] = '.'  # cell between the neighbours
-                labyrinth[tup[0]][tup[1]] = '.'  # next cell
-            elif key == 'down':
-                labyrinth[i][j] = '.'
-                labyrinth[i + 1][j] = '.'
-                labyrinth[tup[0]][tup[1]] = '.'
-            elif key == 'left':
-                labyrinth[i][j] = '.'
-                labyrinth[i][j - 1] = '.'
-                labyrinth[tup[0]][tup[1]] = '.'
-            elif key == 'right':
-                labyrinth[i][j] = '.'
-                labyrinth[i][j + 1] = '.'
-                labyrinth[tup[0]][tup[1]] = '.'
-            else:
-                print("Error, key is invalid")
-
-
-def DFS_bis(link, walls, i, j):
-    cells.append((i, j))
-    # print("current cell:", (i, j))
-
-    neighbours = get_neighbours(i, j, 2)
-    coordinates = []
-    for n in neighbours.values():
-        coordinates.append(n)
-    random.shuffle(coordinates)
-
-    # print("neighbours:", neighbours)
-    for tup in coordinates:
-        if tup not in cells:
-            # Breaks walls
-            breakableWalls(neighbours, tup, i, j)
-
-            # Links between cells for Kruskal later on
-            # link.append(((i, j), tup))
-
-            # Recursive call
-            DFS_bis(link, walls, tup[0], tup[1])
-
-
-def resolution(path, res, i, j, realP, pDone):
-    res[i][j] = 'O'  # marks current cell as visited
-    print("current cell:", (i, j))
-
-    neighbours = get_neighbours(i, j, 1)
-    coordinates = []
-    for n in neighbours.values():
-        coordinates.append(n)
-    random.shuffle(coordinates)
-
-    # if we did not reach the end yet
-
-    for tup in coordinates:
-        # not visited yet '.' & not a wall '#'
-        if res[tup[0]][tup[1]] != 'O' and res[tup[0]][tup[1]] == '.':
-            # If end cell is reached
-            if tup == (len(res) - 2, len(res) - 2) and not pDone:
-                res[tup[0]][tup[1]] = 'O'
-                # Copying path into realPath
-                for coord in path:
-                    realPath.append(coord)
-                realPath.append((len(res) - 2, len(res) - 2))
-
-            # Add to path
-            path.append(tup)
-
-            # Recursive call
-            print(path)
-            print("\nRealpath from outerscope", realP, '\n')
-            resolution(path, res, tup[0], tup[1], realP, pDone)
-        elif tup == coordinates[len(coordinates) - 1] and res[tup[0]][tup[1]] == 'O' and res[tup[0]][tup[1]] != '.' and tup != (len(res) - 2, len(res) - 2):
-            # Back tracking when you can't move forward anymore
-            # pop doesnt remove cells at every iteration
-            if len(path) != 0:
-                path.pop(- 1)
-
-
 ########################################################
 labyrinth = initLabyrinth()
 mazeSize = len(labyrinth)
 cells = initVisitedCells()
-# print("init cells:", cells)
 
 # DFS
 path = [
@@ -205,12 +97,8 @@ path = [
 ]
 link = []
 
-walls = {
-    (1, 1): []
-}
-
 print("-- Generating the labyrinth, please wait! --")
-DFS_bis(link, walls, 1, 1)
+dfs.dfs(labyrinth, link, cells, 1, 1)
 
 # Visited cells
 # cells.sort()
@@ -219,9 +107,6 @@ DFS_bis(link, walls, 1, 1)
 
 # Link between cells -> Kruskal
 # print("Link between cells:", link)
-
-# Breakable Walls
-# print("Walls:", walls)
 
 # Printing the labyrinth
 print("Printing labyrinth : ")
@@ -235,7 +120,7 @@ print("Len of resolution path", len(path))
 res = numpy.copy(labyrinth)
 
 realPath = []
-resolution(path, res, 1, 1, realPath, False)
+resolution.resolution(path, res, 1, 1, realPath, False, mazeSize)
 
 print("Checking if res checks every cell possible")
 print(printLabyrinth(res))
