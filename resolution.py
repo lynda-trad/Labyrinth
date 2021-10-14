@@ -9,7 +9,7 @@ sys.setrecursionlimit(1500)
 # Resolution of labyrinth
 
 def resolution(path, res, i, j, realPath, pDone):
-    res[i][j] = 'O'  # marks current cell as visited
+    res[i][j] = 'o'  # marks current cell as visited
     # print("current cell:", (i, j))
 
     neighbours = dfs.get_neighbours(i, j, 1, len(res))

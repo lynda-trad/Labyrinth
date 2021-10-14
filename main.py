@@ -1,11 +1,12 @@
 from os.path import exists
 
 import numpy
-import numpy as np
 import sys
 
 import dfs
 import resolution
+import draw
+import Cells
 
 sys.setrecursionlimit(2200)
 
@@ -42,7 +43,7 @@ def initLabyrinth():
             continue
 
     size = num * 2 + 1
-    labyrinth = np.tile('#', (size, size))
+    labyrinth = numpy.tile('#', (size, size))
     labyrinth[0][0] = '.'
     labyrinth[1][0] = '.'
     labyrinth[1][1] = '.'
@@ -57,21 +58,18 @@ def printLabyrinth(labyrinth):
     stringLab = ""
     for i in range(len(labyrinth)):
         for j in range(len(labyrinth)):
-            if labyrinth[i][j] == '.':
-                stringLab += '' + labyrinth[i][j] + ''
-            else:
-                stringLab += '' + (labyrinth[i][j]) + ''
+            stringLab += '' + str(labyrinth[i][j]) + ''
         stringLab += '\n'
     return stringLab
 
 
 # Prints solution path onto the resolution numpy
 def printSolutionPath(res, realPath):
-    res[0][0] = res[1][0] = res[1][1] = res[-1][-1] = res[-2][-1] = res[-2][-2] = 'O'
+    res[0][0] = res[1][0] = res[1][1] = res[-1][-1] = res[-2][-1] = res[-2][-2] = 'o'
     for i in range(len(res)):
         for j in range(len(res)):
             if (i, j) in realPath:
-                res[i][j] = 'O'
+                res[i][j] = 'o'
 
 
 # Initializes visited cell list
@@ -109,13 +107,13 @@ mazeSize = len(labyrinth)
 cells = initVisitedCells()
 
 # DFS
-link = []
+link = numpy.zeros((mazeSize * mazeSize, mazeSize * mazeSize))
 
 print("-- Generating the labyrinth, please wait! --")
 dfs.dfs(labyrinth, link, cells, 1, 1)
 
 # Link between cells -> Kruskal
-# print("Link between cells:", link)
+print("Link between cells:\n", link)
 
 # Printing the labyrinth
 print("Printing labyrinth : ")
@@ -142,3 +140,14 @@ print("Solution path: ")
 res = numpy.copy(labyrinth)
 printSolutionPath(res, endingPath)
 print(printLabyrinth(res))
+
+# Cells.initCellArray(mazeSize)
+
+print("Link between cells:\n")
+printLabyrinth(link)
+
+# Write solution to file
+#writeMazeToFile(printLabyrinth(res))
+
+# Print labyrinth to png
+draw.rectangle("labyrinth.png", res)

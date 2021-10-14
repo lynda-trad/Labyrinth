@@ -76,7 +76,18 @@ def dfs(labyrinth, link, cells, i, j):
             breakableWalls(labyrinth, neighbours, tup, i, j)
 
             # Links between cells for Kruskal later on
-            # link.append(((i, j), tup))
+            # size = len(labyrinth)
+            # idFirst = size * i + j
+            # idSecond = size * tup[0] + tup[1]
+            # link[idFirst][idSecond] = 1
+            # A link exists between cell idFirst and idSecond
 
             # Recursive call
             dfs(labyrinth, link, cells, tup[0], tup[1])
+
+######################
+# Each cell has an ID :
+# the ID is equal to size * x + y
+# This way we will make a matrice in which will put
+# 1 if two cells are linked by a wall
+# default is 0
