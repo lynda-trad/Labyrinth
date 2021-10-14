@@ -1,9 +1,11 @@
 from PIL import Image, ImageDraw
 
 
-def rectangle(output_path, lab):
-    imageSize = 100
-    rectSize = 20
+def rectangle(output_path, lab, path):
+    imageSize = len(lab) * 2
+    rectSize = int(len(lab) / 2)
+    #imageSize = 100
+    #rectSize = 20
 
     image = Image.new("RGB", (imageSize, imageSize), "#F5F5DC")
     draw = ImageDraw.Draw(image)
@@ -14,6 +16,8 @@ def rectangle(output_path, lab):
                 draw.rectangle([(0, 0), (rectSize, rectSize)], fill="black")
             elif lab[i][j] == '#':
                 draw.rectangle([(j * rectSize, i * rectSize), (j + 1 * rectSize, i + 1 * rectSize)], fill="black")
+            elif (i, j) in path:
+                draw.rectangle([(j * rectSize, i * rectSize), (j + 1 * rectSize, i + 1 * rectSize)], fill="blue")
             else:
                 draw.rectangle([(j * rectSize, i * rectSize), (j + 1 * rectSize, i + 1 * rectSize)], fill="white")
 

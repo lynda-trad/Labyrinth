@@ -150,4 +150,4 @@ print(printLabyrinth(res))
 #writeMazeToFile(printLabyrinth(res))
 
 # Print labyrinth to png
-draw.rectangle("labyrinth.png", res)
+draw.rectangle("labyrinth.png", res, endingPath)
