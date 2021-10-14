@@ -8,7 +8,7 @@ import resolution
 import draw
 import Cells
 
-sys.setrecursionlimit(2200)
+sys.setrecursionlimit(2500)
 
 
 # Writes labyrinth to file
@@ -143,8 +143,8 @@ print(printLabyrinth(res))
 
 # Cells.initCellArray(mazeSize)
 
-print("Link between cells:\n")
-printLabyrinth(link)
+#print("Link between cells:\n")
+#printLabyrinth(link)
 
 # Write solution to file
 #writeMazeToFile(printLabyrinth(res))
