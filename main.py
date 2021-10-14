@@ -7,7 +7,7 @@ import sys
 import dfs
 import resolution
 
-sys.setrecursionlimit(1500)
+sys.setrecursionlimit(2200)
 
 
 # Writes labyrinth to file
@@ -31,11 +31,18 @@ def writeMazeToFile(lab):
 
 # Initializes labyrinth for printing
 def initLabyrinth():
-    num = int(input("Please enter labyrinth size between 0 and 50\n"))
-    while num <= 0 or num > 50:
-        num = int(input("Please enter labyrinth size between 0 and 50\n"))
+    while True:
+        try:
+            num = int(input("Please enter labyrinth size between 1 and 30\n"))
+            if int(num) <= 0 or int(num) > 30:
+                continue
+            break
+        except ValueError:
+            print("Please input integer only.")
+            continue
+
     size = num * 2 + 1
-    labyrinth = np.tile('|', (size, size))
+    labyrinth = np.tile('#', (size, size))
     labyrinth[0][0] = '.'
     labyrinth[1][0] = '.'
     labyrinth[1][1] = '.'
@@ -58,18 +65,13 @@ def printLabyrinth(labyrinth):
     return stringLab
 
 
-# Prints solution path
+# Prints solution path onto the resolution numpy
 def printSolutionPath(res, realPath):
-    res[0][0] = 'X'
-    res[1][0] = 'X'
-    res[1][1] = 'X'
-    res[-1][-1] = 'X'
-    res[-2][-1] = 'X'
-    res[-2][-2] = 'X'
+    res[0][0] = res[1][0] = res[1][1] = res[-1][-1] = res[-2][-1] = res[-2][-2] = 'O'
     for i in range(len(res)):
         for j in range(len(res)):
             if (i, j) in realPath:
-                res[i][j] = 'X'
+                res[i][j] = 'O'
 
 
 # Initializes visited cell list
@@ -112,11 +114,6 @@ link = []
 print("-- Generating the labyrinth, please wait! --")
 dfs.dfs(labyrinth, link, cells, 1, 1)
 
-# Visited cells
-# cells.sort()
-# print("FINAL Cells:", cells)
-# print("len of cells", len(cells))
-
 # Link between cells -> Kruskal
 # print("Link between cells:", link)
 
@@ -126,7 +123,6 @@ lab = printLabyrinth(labyrinth)
 print(lab)
 
 # Resolution
-# Works on small labyrinth but fails to pop the wrong path on bigger labyrinth
 path = [
     (1, 1)
 ]
@@ -143,5 +139,6 @@ print(printLabyrinth(res))
 
 # Printing solution path
 print("Solution path: ")
+res = numpy.copy(labyrinth)
 printSolutionPath(res, endingPath)
 print(printLabyrinth(res))
