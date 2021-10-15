@@ -7,7 +7,7 @@ def initCellArray(size):
     for i in range(size):
         for j in range(size):
             index += 1
-            cellArray[i][j] = Cells.Cells((i, j), index)
+            cellArray[i][j] = Cells((i, j), index)
     print("Simple print :", cellArray)
     print("printCellArray :")
     printCellArray(cellArray)
@@ -22,6 +22,7 @@ def printCellArray(cellArray):
 
 class Cells:
     def __init__(self, coord, index):
+        self.char = '#'
         self.coordinates = coord
         self.index = index
 
@@ -31,11 +32,17 @@ class Cells:
     def getIndex(self):
         return self.index
 
+    def getChar(self):
+        return self.char
+
     def setCoordinates(self, coord):
         self.coordinates = coord
 
     def setIndex(self, index):
         self.index = index
+
+    def setChar(self, char):
+        self.char = char
 
     def printCell(self):
         strCell = ""
