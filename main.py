@@ -124,10 +124,13 @@ print(lab)
 path = [
     (1, 1)
 ]
+printPath = [
+    (1, 1)
+]
 endingPath = []
 res = numpy.copy(labyrinth)
 
-resolution.resolution(path, res, 1, 1, endingPath, False)
+resolution.resolution(path, res, 1, 1, endingPath, False, printPath)
 
 print("Resolution path :", endingPath)
 print("Len of resolution path", len(endingPath))
@@ -143,11 +146,11 @@ print(printLabyrinth(res))
 
 # Cells.initCellArray(mazeSize)
 
-#print("Link between cells:\n")
-#printLabyrinth(link)
+# print("Link between cells:\n")
+# printLabyrinth(link)
 
 # Write solution to file
-#writeMazeToFile(printLabyrinth(res))
+# writeMazeToFile(printLabyrinth(res))
 
 # Print labyrinth to png
-draw.rectangle("labyrinth.png", res, endingPath)
+draw.rectangle("labyrinth.png", res, endingPath, printPath)

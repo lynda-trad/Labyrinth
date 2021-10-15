@@ -8,9 +8,8 @@ sys.setrecursionlimit(1500)
 ##################################################
 # Resolution of labyrinth
 
-def resolution(path, res, i, j, realPath, pDone):
+def resolution(path, res, i, j, realPath, pDone, printPath):
     res[i][j] = 'o'  # marks current cell as visited
-    # print("current cell:", (i, j))
 
     neighbours = dfs.get_neighbours(i, j, 1, len(res))
     coordinates = []
@@ -19,10 +18,10 @@ def resolution(path, res, i, j, realPath, pDone):
     random.shuffle(coordinates)
 
     if not pDone:
-        resolutionCheck(coordinates, path, res, realPath, pDone)
+        resolutionCheck(coordinates, path, res, realPath, pDone, printPath)
 
 
-def resolutionCheck(coordinates, path, res, realPath, pDone):
+def resolutionCheck(coordinates, path, res, realPath, pDone, printPath):
     for tup in coordinates:
         # if not visited yet '.' & not a wall '#'
         if res[tup[0]][tup[1]] != 'O' and res[tup[0]][tup[1]] == '.':
@@ -30,9 +29,9 @@ def resolutionCheck(coordinates, path, res, realPath, pDone):
             checkEnding(tup, res, len(res), path, realPath, pDone)
             # Add to path
             path.append(tup)
+            printPath.append(tup)
             # Recursive call
-            # print("Current path:", path)
-            resolution(path, res, tup[0], tup[1], realPath, pDone)
+            resolution(path, res, tup[0], tup[1], realPath, pDone, printPath)
             path.pop(- 1)
 
 
