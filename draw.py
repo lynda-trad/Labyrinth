@@ -14,8 +14,10 @@ def rectangle(output_path, lab, endingPath, printPath):
                 draw.rectangle([(0, 0), (rectSize, rectSize)], fill="black")
             elif lab[i][j] == '#':
                 draw.rectangle([(j * rectSize, i * rectSize), (j + 1 * rectSize, i + 1 * rectSize)], fill="black")
-            elif (i, j) in endingPath:
+            elif (i, j) in endingPath and (i, j):
                 draw.rectangle([(j * rectSize, i * rectSize), (j + 1 * rectSize, i + 1 * rectSize)], fill="blue")
+            elif (i, j) in printPath and (i, j) not in endingPath:
+                draw.rectangle([(j * rectSize, i * rectSize), (j + 1 * rectSize, i + 1 * rectSize)], fill="purple")
             else:
                 draw.rectangle([(j * rectSize, i * rectSize), (j + 1 * rectSize, i + 1 * rectSize)], fill="white")
 
