@@ -150,7 +150,7 @@ print(printLabyrinth(res))
 # printLabyrinth(link)
 
 # Write solution to file
-# writeMazeToFile(printLabyrinth(res))
+writeMazeToFile(printLabyrinth(res))
 
 # Print labyrinth to png
 draw.rectangle("labyrinth.png", res, endingPath, printPath)

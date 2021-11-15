@@ -21,10 +21,10 @@ mazeSize = num * 2 + 1
 cellArray = Cells.initCellArray(mazeSize)
 
 # mur quand i est pair
-i = random.randint(0, mazeSize)
+i = random.randint(2, mazeSize - 2)
 while i % 2 != 0:
-    i = random.randint(0, mazeSize)
+    i = random.randint(2, mazeSize - 2)
 # on a un mur random, on check deux voisins de chaque direction (gauche - droite) ou (haut - bas)
 # si le couple a des index differents alors ils auront tous les deux lindex du premier membre
-# si ils ont le meme index on prend le couple 
+# si ils ont le meme index on prend le couple de lautre direction et on check la 1ere condition
 
