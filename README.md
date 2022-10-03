@@ -1,9 +1,6 @@
 -- Depth First Search / DFS --
 
-
-
-
-1) Enter the size of a labyrinth as a number. The labyrinth will be n * 2 pixels wide.
+1 ) Enter the size of a labyrinth as a number. The labyrinth will be n * 2 pixels wide.
 
 ---
 
@@ -15,7 +12,7 @@
 
 ---
 
-4) Then the program will show in an image :
+4 ) Then the program will show in an image :
 - the solution path in blue
 - the path that DFS tried in purple.
 
