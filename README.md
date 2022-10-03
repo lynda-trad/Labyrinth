@@ -1,7 +1,5 @@
 -- Depth First Search / DFS --
 
-How to use the program :
-
 1) Enter the size of a labyrinth as a number. The labyrinth will be n * 2 pixels wide.
 
 ---
